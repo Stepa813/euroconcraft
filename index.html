@@ -1,0 +1,1515 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>EuroConCraft — Натяжные потолки</title>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;600;700;900&family=Playfair+Display:ital,wght@0,700;1,400&family=Sarabun:wght@300;400;600;700&display=swap');
+
+*,*::before,*::after{margin:0;padding:0;box-sizing:border-box;}
+:root{
+  --deep:#0B0F1A;--pearl:#F0EFEA;--gold:#C9A96E;--gold-lt:#E8C98A;
+  --muted:#4A506A;--card:rgba(255,255,255,.035);--border:rgba(201,169,110,.18);
+}
+html{font-size:16px;}
+body{
+  background:var(--deep);font-family:'Montserrat',sans-serif;
+  color:var(--pearl);overflow:hidden;
+  height:100dvh;height:100vh;width:100vw;touch-action:pan-y;
+}
+body.th{font-family:'Sarabun',sans-serif;}
+
+/* ═══ LOGO BAR ═══ */
+#logo-bar{
+  position:fixed;top:0;left:0;right:0;height:52px;
+  display:flex;align-items:center;justify-content:space-between;
+  padding:0 16px;
+  background:rgba(11,15,26,.88);backdrop-filter:blur(12px);
+  border-bottom:1px solid rgba(201,169,110,.12);z-index:200;
+}
+.logo{font-size:15px;font-weight:700;letter-spacing:.5px;color:var(--pearl);}
+.logo span{color:var(--gold);}
+
+/* right side of bar */
+.bar-right{display:flex;align-items:center;gap:12px;}
+#counter{font-size:10px;letter-spacing:2px;color:var(--muted);}
+
+/* ─── LANG TOGGLE ─── */
+#lang-toggle{
+  display:flex;align-items:center;
+  background:rgba(255,255,255,.06);
+  border:1px solid rgba(255,255,255,.12);
+  border-radius:20px;overflow:hidden;
+  height:26px;
+}
+.lang-btn{
+  padding:0 10px;height:100%;
+  font-size:10px;font-weight:700;letter-spacing:1px;
+  background:transparent;border:none;color:var(--muted);
+  cursor:pointer;transition:all .25s;
+  font-family:'Montserrat',sans-serif;
+  -webkit-tap-highlight-color:transparent;
+}
+.lang-btn.active{
+  background:var(--gold);color:#0B0F1A;border-radius:18px;
+}
+
+/* ═══ PROGRESS ═══ */
+#progress{position:fixed;top:52px;left:0;height:2px;background:var(--gold);width:0%;z-index:200;transition:width linear;}
+
+/* ═══ DOTS ═══ */
+#dots{position:fixed;bottom:54px;left:50%;transform:translateX(-50%);display:flex;gap:7px;align-items:center;z-index:200;}
+.dot{width:5px;height:5px;border-radius:50%;background:rgba(255,255,255,.25);cursor:pointer;transition:all .3s;}
+.dot.active{width:18px;border-radius:3px;background:var(--gold);}
+
+/* ═══ CONTROLS ═══ */
+#controls{position:fixed;bottom:10px;left:50%;transform:translateX(-50%);display:flex;gap:10px;z-index:200;}
+.ctrl-btn{
+  background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.12);
+  color:var(--pearl);padding:5px 14px;border-radius:20px;
+  font-family:'Montserrat',sans-serif;font-size:10px;letter-spacing:1.2px;
+  cursor:pointer;transition:background .2s;white-space:nowrap;
+  -webkit-tap-highlight-color:transparent;
+}
+.ctrl-btn:active{background:rgba(201,169,110,.2);}
+#autoBtn.paused{color:var(--gold);border-color:var(--gold);}
+
+/* ═══ SLIDESHOW ═══ */
+#slideshow{position:relative;width:100%;height:100vh;}
+
+/* ═══ SLIDE BASE ═══ */
+.slide{
+  position:absolute;inset:0;top:52px;
+  padding:20px 20px 100px;
+  display:flex;flex-direction:column;align-items:center;justify-content:center;
+  overflow:hidden;opacity:0;pointer-events:none;transition:opacity .5s ease;
+}
+.slide.active{opacity:1;pointer-events:auto;}
+.wave{position:absolute;top:0;left:0;right:0;height:3px;background:linear-gradient(90deg,transparent,var(--gold),#fff9,var(--gold),transparent);transform:scaleX(0);transform-origin:left;}
+.slide.active .wave{animation:waveIn .9s cubic-bezier(.4,0,.2,1) forwards;}
+@keyframes waveIn{0%{transform:scaleX(0);opacity:.5;}60%{transform:scaleX(1.04);opacity:1;}100%{transform:scaleX(1);opacity:1;}}
+.slide::after{content:'';position:absolute;inset:0;background:var(--deep);pointer-events:none;opacity:1;transition:opacity .55s ease;}
+.slide.active::after{opacity:0;}
+
+/* animations */
+@keyframes fadeUp{to{opacity:1;transform:translateY(0);}}
+@keyframes popIn {to{opacity:1;transform:scale(1);}}
+@keyframes growW {to{width:var(--target-w,200px);}}
+.slide.active .au1{animation:fadeUp .6s .2s  forwards;}
+.slide.active .au2{animation:fadeUp .6s .35s forwards;}
+.slide.active .au3{animation:fadeUp .6s .5s  forwards;}
+.slide.active .au4{animation:fadeUp .6s .65s forwards;}
+.slide.active .au5{animation:fadeUp .6s .8s  forwards;}
+.slide.active .au6{animation:fadeUp .6s .95s forwards;}
+.slide.active .au7{animation:fadeUp .6s 1.1s forwards;}
+.slide.active .pop1{animation:popIn .7s .25s cubic-bezier(.34,1.56,.64,1) forwards;}
+.pre-anim{opacity:0;transform:translateY(22px);}
+.pre-pop {opacity:0;transform:scale(.7);}
+.eyebrow{font-size:9px;letter-spacing:4px;text-transform:uppercase;color:var(--gold);margin-bottom:14px;}
+.g-line{height:1px;width:0;background:linear-gradient(90deg,transparent,var(--gold),transparent);margin:18px auto 0;}
+.slide.active .g-line{animation:growW .9s 1s forwards;--target-w:200px;}
+
+/* SLIDE 0 */
+#s0{background:var(--deep);text-align:center;}
+#s0 .bg-photo{
+  position:absolute;inset:0;
+  background:url('https://source.unsplash.com/photo-1600607687939-ce8a6c25118c/1400x900') center/cover no-repeat;
+  opacity:.35; z-index:0;
+}
+#s0 .bg-glow{position:absolute;width:70vw;height:70vw;max-width:420px;max-height:420px;border-radius:50%;background:radial-gradient(circle,rgba(42,53,96,.55) 0%,transparent 70%);top:50%;left:50%;transform:translate(-50%,-50%);z-index:1;}
+#s0>*:not(.bg-photo):not(.bg-glow){position:relative;z-index:2;}
+#s0 h1{font-family:'Playfair Display',serif;font-size:clamp(36px,9vw,80px);line-height:1.08;font-weight:700;margin-bottom:6px;}
+#s0 h1 em{font-style:italic;color:var(--gold);}
+#s0 .sub{font-size:clamp(12px,3.2vw,16px);font-weight:300;color:rgba(240,239,234,.55);max-width:340px;line-height:1.65;margin-top:12px;}
+
+/* SLIDE 1 */
+#s1{background:linear-gradient(135deg,#0B0F1A 55%,#131B35 100%);text-align:center;}
+#s1 .num{font-family:'Playfair Display',serif;font-size:clamp(72px,20vw,140px);color:var(--gold);line-height:1;}
+#s1 .lbl{font-size:clamp(10px,3vw,15px);font-weight:300;letter-spacing:2.5px;color:rgba(240,239,234,.55);margin-top:4px;}
+#s1 h2{font-size:clamp(18px,5vw,34px);font-weight:700;margin-top:18px;max-width:480px;}
+#s1 p{font-size:clamp(12px,3.2vw,15px);font-weight:300;color:rgba(240,239,234,.5);max-width:400px;line-height:1.7;margin-top:12px;}
+
+/* SLIDE 2 */
+#s2{background:var(--deep);justify-content:flex-start;align-items:stretch;padding-top:24px;padding-bottom:100px;overflow-y:auto;}
+#s2 h2{font-size:clamp(16px,4.5vw,28px);font-weight:700;margin-bottom:18px;text-align:center;flex-shrink:0;}
+.cmp-wrap{width:100%;overflow-x:auto;-webkit-overflow-scrolling:touch;}
+table.cmp{width:100%;min-width:340px;border-collapse:collapse;font-size:clamp(10px,2.8vw,13px);}
+table.cmp thead th{font-size:9px;letter-spacing:1.5px;text-transform:uppercase;font-weight:600;padding:6px 10px 12px;text-align:center;}
+.th-us{color:var(--gold-lt);}
+table.cmp tbody tr{border-top:1px solid rgba(255,255,255,.06);opacity:0;transform:translateX(-16px);}
+#s2.active table.cmp tbody tr:nth-child(1){animation:slideR .45s .45s forwards;}
+#s2.active table.cmp tbody tr:nth-child(2){animation:slideR .45s .58s forwards;}
+#s2.active table.cmp tbody tr:nth-child(3){animation:slideR .45s .71s forwards;}
+#s2.active table.cmp tbody tr:nth-child(4){animation:slideR .45s .84s forwards;}
+#s2.active table.cmp tbody tr:nth-child(5){animation:slideR .45s .97s forwards;}
+#s2.active table.cmp tbody tr:nth-child(6){animation:slideR .45s 1.1s forwards;}
+#s2.active table.cmp tbody tr:nth-child(7){animation:slideR .45s 1.23s forwards;}
+@keyframes slideR{to{opacity:1;transform:translateX(0);}}
+table.cmp td{padding:8px 10px;text-align:center;}
+table.cmp td:first-child{text-align:left;font-weight:500;color:rgba(240,239,234,.7);white-space:nowrap;}
+.td-us{font-weight:600;color:var(--gold-lt);}
+.ic-y{color:#6FD08C;font-size:16px;}.ic-n{color:#E06C75;font-size:16px;}.ic-p{color:#E5C07B;font-size:13px;}
+
+/* SLIDE 3 */
+#s3{background:linear-gradient(155deg,#0d1220,#0B0F1A);text-align:center;}
+#s3 h2{font-size:clamp(16px,4.5vw,28px);font-weight:700;margin-bottom:18px;}
+.adv-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;width:100%;max-width:700px;}
+@media(max-width:480px){.adv-grid{grid-template-columns:repeat(2,1fr);}}
+.adv-card{background:var(--card);border:1px solid var(--border);border-radius:10px;padding:14px 12px;text-align:left;transition:border-color .3s;}
+.adv-card:active{border-color:rgba(201,169,110,.5);}
+.adv-icon{font-size:22px;margin-bottom:8px;}
+.adv-title{font-size:clamp(10px,2.6vw,12px);font-weight:700;color:var(--gold-lt);margin-bottom:5px;}
+.adv-desc{font-size:clamp(9px,2.3vw,11px);font-weight:300;color:rgba(240,239,234,.5);line-height:1.55;}
+
+/* SLIDE 4 */
+#s4{background:var(--deep);text-align:center;}
+#s4 h2{font-size:clamp(16px,4.5vw,28px);font-weight:700;margin-bottom:18px;}
+.types-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;width:100%;max-width:700px;}
+@media(max-width:440px){.types-grid{grid-template-columns:1fr;max-width:340px;}}
+.type-card{border-radius:10px;padding:18px 14px;text-align:left;position:relative;overflow:hidden;background:linear-gradient(135deg,#1a1f35,#232a48);}
+.type-card::before{content:'';position:absolute;top:0;left:0;right:0;height:3px;z-index:2;}
+.type-card .tc-photo{position:absolute;inset:0;background-size:cover;background-position:center;opacity:.28;z-index:0;}
+.type-card>*:not(.tc-photo){position:relative;z-index:1;}
+.tc-gloss::before{background:linear-gradient(90deg,#7EB8F7,#B3D4FF);}
+.tc-matte::before{background:linear-gradient(90deg,#A0A0B0,#D0D0D8);}
+.tc-satin::before{background:linear-gradient(90deg,var(--gold),var(--gold-lt));}
+.tc-gloss .tc-photo{background-image:url('https://source.unsplash.com/photo-1600607687939-ce8a6c25118c/600x400');}
+.tc-matte .tc-photo{background-image:url('https://source.unsplash.com/photo-1615529328331-f8917597711f/600x400');}
+.tc-satin .tc-photo{background-image:url('https://source.unsplash.com/photo-1631679706909-1844bbd07221/600x400');}
+
+/* SLIDE 6 installation — photo bg */
+#s6{background:var(--deep);text-align:center;position:relative;}
+#s6 .bg-photo{
+  position:absolute;inset:0;
+  background:url('https://source.unsplash.com/photo-1504307651254-35680f356dfd/1200x800') center/cover no-repeat;
+  opacity:.25; z-index:0;
+}
+#s6>*:not(.bg-photo){position:relative;z-index:1;}
+
+/* SLIDE 9 CTA — photo bg */
+#s9{background:linear-gradient(135deg,#0B0F1A,#0f1828);text-align:center;position:relative;}
+#s9 .bg-photo{
+  position:absolute;inset:0;
+  background:url('https://source.unsplash.com/photo-1560185127-6ed189bf02f4/1400x900') center/cover no-repeat;
+  opacity:.28; z-index:0;
+}
+#s9>*:not(.bg-photo){position:relative;z-index:1;}
+.type-name{font-size:clamp(13px,3.5vw,16px);font-weight:700;margin-bottom:5px;}
+.type-tag{display:inline-block;font-size:8px;letter-spacing:1.5px;text-transform:uppercase;padding:2px 7px;border-radius:3px;margin-bottom:10px;}
+.tag-g{background:rgba(126,184,247,.15);color:#7EB8F7;}
+.tag-m{background:rgba(200,200,210,.15);color:#C8C8D2;}
+.tag-s{background:rgba(201,169,110,.2);color:var(--gold-lt);}
+.type-desc{font-size:clamp(9px,2.5vw,11px);font-weight:300;color:rgba(240,239,234,.5);line-height:1.55;}
+.type-feats{margin-top:10px;}
+.type-feat{font-size:clamp(9px,2.3vw,10px);color:rgba(240,239,234,.6);margin-bottom:4px;}
+.type-feat::before{content:'— ';color:var(--gold);}
+
+/* SLIDE 5 */
+#s5{background:linear-gradient(135deg,#0B0F1A,#101830);text-align:center;}
+#s5 h2{font-size:clamp(15px,4.2vw,26px);font-weight:700;margin-bottom:24px;max-width:420px;}
+.bars{width:100%;max-width:560px;}
+.bar-row{display:flex;align-items:center;gap:10px;margin-bottom:14px;opacity:0;transform:translateY(14px);}
+.bar-name{width:130px;min-width:130px;text-align:right;font-size:clamp(10px,2.8vw,12px);font-weight:400;color:rgba(240,239,234,.65);}
+@media(max-width:380px){.bar-name{width:100px;min-width:100px;font-size:10px;}}
+.bar-track{flex:1;height:7px;background:rgba(255,255,255,.07);border-radius:4px;overflow:hidden;}
+.bar-fill{height:100%;border-radius:4px;width:0;}
+.bar-val{width:62px;font-size:clamp(9px,2.4vw,11px);font-weight:600;color:rgba(240,239,234,.75);white-space:nowrap;}
+#s5.active .bar-row:nth-child(1){animation:fadeUp .4s .5s  forwards;}
+#s5.active .bar-row:nth-child(2){animation:fadeUp .4s .65s forwards;}
+#s5.active .bar-row:nth-child(3){animation:fadeUp .4s .8s  forwards;}
+#s5.active .bar-row:nth-child(4){animation:fadeUp .4s .95s forwards;}
+#s5.active .bar-row:nth-child(5){animation:fadeUp .4s 1.1s forwards;}
+#s5.active .bf1{transition:width 1.2s .7s  cubic-bezier(.4,0,.2,1);width:92%!important;background:linear-gradient(90deg,var(--gold),var(--gold-lt));}
+#s5.active .bf2{transition:width 1.2s .85s cubic-bezier(.4,0,.2,1);width:42%!important;background:#5A6080;}
+#s5.active .bf3{transition:width 1.2s 1s   cubic-bezier(.4,0,.2,1);width:28%!important;background:#5A6080;}
+#s5.active .bf4{transition:width 1.2s 1.15s cubic-bezier(.4,0,.2,1);width:32%!important;background:#5A6080;}
+#s5.active .bf5{transition:width 1.2s 1.3s  cubic-bezier(.4,0,.2,1);width:20%!important;background:#5A6080;}
+.bar-note{font-size:10px;font-weight:300;color:rgba(240,239,234,.35);margin-top:16px;max-width:440px;}
+
+/* SLIDE 6 */
+#s6{background:var(--deep);text-align:center;}
+#s6 h2{font-size:clamp(16px,4.5vw,28px);font-weight:700;margin-bottom:22px;}
+.steps{display:grid;grid-template-columns:repeat(2,1fr);gap:12px;width:100%;max-width:600px;}
+@media(min-width:600px){.steps{grid-template-columns:repeat(4,1fr);}}
+.step{background:var(--card);border:1px solid var(--border);border-radius:10px;padding:16px 12px;text-align:center;}
+.step-n{width:38px;height:38px;border-radius:50%;background:rgba(201,169,110,.1);border:1px solid rgba(201,169,110,.35);display:flex;align-items:center;justify-content:center;font-family:'Playfair Display',serif;font-size:16px;color:var(--gold);margin:0 auto 10px;}
+.step-t{font-size:clamp(11px,3vw,13px);font-weight:700;margin-bottom:6px;}
+.step-d{font-size:clamp(9px,2.4vw,11px);font-weight:300;color:rgba(240,239,234,.5);line-height:1.55;}
+.inst-fact{margin-top:14px;padding:14px 20px;border:1px solid rgba(201,169,110,.2);border-radius:8px;font-size:clamp(11px,3vw,13px);font-weight:300;color:rgba(240,239,234,.7);max-width:500px;line-height:1.6;}
+.inst-fact b{color:var(--gold);font-weight:700;}
+
+/* ═══ PROBLEM SLIDES (7b–7g) ═══ */
+.prob-slide{
+  display:flex;flex-direction:column;align-items:center;
+  width:100%;max-width:720px;gap:12px;
+}
+.prob-badge{
+  font-size:clamp(10px,2.8vw,13px);font-weight:700;
+  padding:5px 18px;border-radius:20px;letter-spacing:.5px;
+  margin-bottom:2px;
+}
+.gkl-badge{background:rgba(224,108,117,.12);border:1px solid rgba(224,108,117,.35);color:#E06C75;}
+.prob-vs-wrap{
+  display:grid;grid-template-columns:1fr auto 1fr;
+  gap:8px;width:100%;align-items:start;
+}
+.prob-side{
+  background:var(--card);border-radius:10px;
+  padding:12px 10px;display:flex;flex-direction:column;align-items:center;gap:8px;
+}
+.prob-bad{border:1px solid rgba(224,108,117,.2);}
+.prob-good{border:1px solid rgba(201,169,110,.2);}
+.prob-icon-wrap{flex-shrink:0;}
+.prob-label{font-size:clamp(10px,2.8vw,12px);font-weight:700;text-align:center;}
+.bad-label{color:#E06C75;} .good-label{color:var(--gold-lt);}
+.prob-list{
+  list-style:none;padding:0;margin:0;
+  font-size:clamp(9px,2.4vw,11px);font-weight:300;
+  color:rgba(240,239,234,.65);line-height:1.55;
+  text-align:left;width:100%;
+}
+.bad-list li::before{content:'✗ ';color:#E06C75;}
+.good-list li::before{content:'✓ ';color:#6FD08C;}
+.prob-list li{margin-bottom:5px;}
+.prob-divider{
+  display:flex;align-items:center;justify-content:center;
+  font-family:'Playfair Display',serif;
+  font-size:clamp(14px,4vw,22px);color:var(--muted);font-weight:700;
+  padding-top:50px;
+}
+.prob-fact{
+  width:100%;padding:10px 16px;
+  border:1px solid rgba(201,169,110,.2);border-radius:8px;
+  font-size:clamp(10px,2.6vw,12px);font-weight:300;
+  color:rgba(240,239,234,.65);line-height:1.6;text-align:center;
+  background:rgba(201,169,110,.04);
+}
+.prob-fact b{color:var(--gold);font-weight:700;}
+
+/* SLIDE 7 — DUEL */
+#s7{background:var(--deep);text-align:center;}
+#s7 h2{font-size:clamp(15px,4.2vw,26px);font-weight:700;margin-bottom:20px;}
+.duel-wrap{display:grid;grid-template-columns:1fr auto 1fr;gap:0;width:100%;max-width:720px;align-items:stretch;}
+.duel-col{display:flex;flex-direction:column;gap:8px;padding:0 8px;}
+.duel-col-gkl .duel-header{background:rgba(224,108,117,.12);border:1px solid rgba(224,108,117,.25);color:#E06C75;}
+.duel-col-nat .duel-header{background:rgba(201,169,110,.12);border:1px solid rgba(201,169,110,.35);color:var(--gold-lt);}
+.duel-header{border-radius:8px;padding:10px 14px;font-size:clamp(11px,3vw,13px);font-weight:700;letter-spacing:.3px;text-align:center;margin-bottom:4px;}
+.duel-item{border-radius:7px;padding:9px 12px;font-size:clamp(9px,2.4vw,11px);line-height:1.5;text-align:left;}
+.duel-col-gkl .duel-item{background:rgba(224,108,117,.06);border:1px solid rgba(224,108,117,.12);color:rgba(240,239,234,.65);}
+.duel-col-nat .duel-item{background:rgba(201,169,110,.06);border:1px solid rgba(201,169,110,.15);color:rgba(240,239,234,.8);}
+.duel-item .duel-icon{font-size:13px;margin-right:5px;}
+.duel-icon-svg{width:16px;height:16px;margin-right:5px;vertical-align:-3px;flex-shrink:0;display:inline-block;}
+.duel-item.has-svg{display:flex;align-items:flex-start;}
+.duel-item.has-svg>span:last-child{flex:1;}
+
+/* termite warning banner */
+.termite-banner{
+  margin-top:14px;width:100%;max-width:720px;
+  display:flex;align-items:center;gap:14px;
+  background:rgba(224,108,117,.08);
+  border:1px solid rgba(224,108,117,.3);
+  border-radius:10px;padding:12px 16px;
+  opacity:0;transform:translateY(16px);
+}
+#s7.active .termite-banner{animation:fadeUp .6s 1.1s forwards;}
+.termite-svg-wrap{flex-shrink:0;width:64px;height:44px;}
+.termite-svg-wrap svg{width:100%;height:100%;overflow:visible;}
+.termite-text{text-align:left;}
+.termite-title{font-size:clamp(11px,3vw,13px);font-weight:700;color:#E06C75;margin-bottom:3px;}
+.termite-desc{font-size:clamp(9px,2.4vw,11px);font-weight:300;color:rgba(240,239,234,.6);line-height:1.5;}
+/* termite walking animation */
+@keyframes termiteWiggle{0%,100%{transform:rotate(-2deg);}50%{transform:rotate(2deg);}}
+@keyframes antennaWiggle{0%,100%{transform:rotate(0deg);}50%{transform:rotate(-8deg);}}
+.tm-body{transform-origin:center;animation:termiteWiggle 1.2s ease-in-out infinite;}
+.tm-antenna{transform-origin:left center;animation:antennaWiggle .8s ease-in-out infinite;}
+.tm-leg{transform-origin:top;animation:antennaWiggle .5s ease-in-out infinite;}
+.duel-divider{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:6px;padding:0 4px;}
+.duel-vs{font-family:'Playfair Display',serif;font-size:clamp(18px,5vw,28px);color:var(--muted);font-weight:700;line-height:1;}
+.duel-tick{width:1px;flex:1;background:rgba(255,255,255,.07);}
+@media(max-width:420px){
+  .duel-wrap{grid-template-columns:1fr auto 1fr;}
+  .duel-item{padding:7px 8px;}
+}
+
+/* SLIDE 8 — COST CHART */
+#s8{background:linear-gradient(155deg,#0B0F1A,#0e1525);text-align:center;}
+#s8 h2{font-size:clamp(15px,4.2vw,26px);font-weight:700;margin-bottom:6px;}
+#s8 .chart-sub{font-size:clamp(10px,2.6vw,12px);font-weight:300;color:rgba(240,239,234,.4);margin-bottom:18px;}
+.cost-chart{width:100%;max-width:620px;position:relative;}
+.chart-svg-wrap{width:100%;aspect-ratio:16/7;position:relative;}
+svg.cost-svg{width:100%;height:100%;}
+.cost-legend{display:flex;gap:18px;justify-content:center;margin-top:14px;flex-wrap:wrap;}
+.leg-item{display:flex;align-items:center;gap:6px;font-size:clamp(9px,2.4vw,11px);color:rgba(240,239,234,.6);}
+.leg-dot{width:10px;height:10px;border-radius:50%;flex-shrink:0;}
+.cost-callout{margin-top:14px;display:flex;gap:10px;justify-content:center;flex-wrap:wrap;}
+.callout-pill{padding:6px 14px;border-radius:20px;font-size:clamp(9px,2.4vw,11px);font-weight:600;background:rgba(201,169,110,.1);border:1px solid rgba(201,169,110,.25);color:var(--gold-lt);}
+
+/* SLIDE 9 (old 7) */
+#s9{background:linear-gradient(135deg,#0B0F1A,#0f1828);text-align:center;}
+#s9 .glow{position:absolute;width:60vw;height:60vw;max-width:380px;max-height:380px;border-radius:50%;background:radial-gradient(circle,rgba(201,169,110,.07) 0%,transparent 70%);top:50%;left:50%;transform:translate(-50%,-50%);pointer-events:none;}
+#s9 h2{font-family:'Playfair Display',serif;font-size:clamp(26px,7.5vw,56px);font-weight:700;line-height:1.15;max-width:520px;}
+#s9 h2 em{font-style:italic;color:var(--gold);}
+#s9 .cta-sub{font-size:clamp(12px,3.2vw,15px);font-weight:300;color:rgba(240,239,234,.5);max-width:400px;line-height:1.7;margin-top:14px;}
+.badges{display:flex;flex-wrap:wrap;gap:8px;justify-content:center;margin-top:22px;}
+.badge{padding:7px 16px;border:1px solid rgba(201,169,110,.3);border-radius:20px;font-size:clamp(9px,2.5vw,11px);font-weight:600;color:var(--gold-lt);letter-spacing:.4px;background:rgba(201,169,110,.06);}
+
+/* prob slide animations */
+.prob-slide .prob-badge{opacity:0;transform:translateY(16px);animation:none;}
+.prob-slide .prob-vs-wrap{opacity:0;transform:translateY(20px);animation:none;}
+.prob-slide .prob-fact{opacity:0;transform:translateY(16px);animation:none;}
+.slide.active .prob-slide .prob-badge{animation:fadeUp .5s .2s forwards;}
+.slide.active .prob-slide .prob-vs-wrap{animation:fadeUp .6s .4s forwards;}
+.slide.active .prob-slide .prob-fact{animation:fadeUp .5s .9s forwards;}
+</style>
+</head>
+<body>
+
+<!-- LOGO BAR -->
+<div id="logo-bar">
+  <div class="logo">Euro<span>Con</span>Craft</div>
+  <div class="bar-right">
+    <div id="lang-toggle">
+      <button class="lang-btn" data-lang="ru">RU</button>
+      <button class="lang-btn active" data-lang="th">TH</button>
+    </div>
+    <div id="counter">1 / 16</div>
+  </div>
+</div>
+
+<div id="progress"></div>
+
+<div id="slideshow">
+
+  <!-- 0: TITLE -->
+  <div class="slide active" id="s0">
+    <div class="wave"></div>
+    <div class="bg-photo"></div>
+    <div class="bg-glow"></div>
+    <div class="eyebrow pre-anim au1" data-key="s0_eyebrow"></div>
+    <h1 class="pre-anim au2" data-key="s0_h1"></h1>
+    <p class="sub pre-anim au3" data-key="s0_sub"></p>
+    <div class="g-line"></div>
+  </div>
+
+  <!-- 1: BIG STAT -->
+  <div class="slide" id="s1">
+    <div class="wave"></div>
+    <div class="eyebrow pre-anim au1" data-key="s1_eyebrow"></div>
+    <div class="num pre-pop pop1">25+</div>
+    <div class="lbl pre-anim au2" data-key="s1_lbl"></div>
+    <h2 class="pre-anim au3" data-key="s1_h2"></h2>
+    <p class="pre-anim au4" data-key="s1_p"></p>
+  </div>
+
+  <!-- 2: COMPARISON -->
+  <div class="slide" id="s2">
+    <div class="wave"></div>
+    <h2 class="pre-anim au1" data-key="s2_h2"></h2>
+    <div class="cmp-wrap">
+      <table class="cmp">
+        <thead>
+          <tr>
+            <th style="text-align:left" data-key="s2_col0"></th>
+            <th class="th-us" data-key="s2_col1"></th>
+            <th data-key="s2_col2"></th>
+            <th data-key="s2_col3"></th>
+            <th data-key="s2_col4"></th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr><td data-key="s2_r1"></td><td class="td-us"><span class="ic-y">✓</span></td><td><span class="ic-n">✗</span></td><td><span class="ic-p">~</span></td><td><span class="ic-y">✓</span></td></tr>
+          <tr><td data-key="s2_r2"></td><td class="td-us"><span class="ic-y">✓</span></td><td><span class="ic-n">✗</span></td><td><span class="ic-n">✗</span></td><td><span class="ic-p">~</span></td></tr>
+          <tr><td data-key="s2_r3"></td><td class="td-us"><span class="ic-y">✓</span></td><td><span class="ic-n">✗</span></td><td><span class="ic-n">✗</span></td><td><span class="ic-n">✗</span></td></tr>
+          <tr><td data-key="s2_r4"></td><td class="td-us"><span class="ic-y">✓</span></td><td><span class="ic-n">✗</span></td><td><span class="ic-n">✗</span></td><td><span class="ic-n">✗</span></td></tr>
+          <tr><td data-key="s2_r5"></td><td class="td-us"><span class="ic-y">✓</span></td><td><span class="ic-p">~</span></td><td><span class="ic-n">✗</span></td><td><span class="ic-n">✗</span></td></tr>
+          <tr><td data-key="s2_r6"></td><td class="td-us"><span class="ic-y">✓</span></td><td><span class="ic-p">~</span></td><td><span class="ic-p">~</span></td><td><span class="ic-n">✗</span></td></tr>
+          <tr><td data-key="s2_r7"></td><td class="td-us"><span class="ic-y">✓</span></td><td><span class="ic-y">✓</span></td><td><span class="ic-n">✗</span></td><td><span class="ic-n">✗</span></td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <!-- 3: 6 ADVANTAGES -->
+  <div class="slide" id="s3">
+    <div class="wave"></div>
+    <h2 class="pre-anim au1" data-key="s3_h2"></h2>
+    <div class="adv-grid">
+      <div class="adv-card pre-anim au2"><div class="adv-icon">💧</div><div class="adv-title" data-key="s3_a1t"></div><div class="adv-desc" data-key="s3_a1d"></div></div>
+      <div class="adv-card pre-anim au3"><div class="adv-icon">⚡</div><div class="adv-title" data-key="s3_a2t"></div><div class="adv-desc" data-key="s3_a2d"></div></div>
+      <div class="adv-card pre-anim au4"><div class="adv-icon">🎨</div><div class="adv-title" data-key="s3_a3t"></div><div class="adv-desc" data-key="s3_a3d"></div></div>
+      <div class="adv-card pre-anim au5"><div class="adv-icon">🔇</div><div class="adv-title" data-key="s3_a4t"></div><div class="adv-desc" data-key="s3_a4d"></div></div>
+      <div class="adv-card pre-anim au6"><div class="adv-icon">🌡️</div><div class="adv-title" data-key="s3_a5t"></div><div class="adv-desc" data-key="s3_a5d"></div></div>
+      <div class="adv-card pre-anim au7"><div class="adv-icon">🧹</div><div class="adv-title" data-key="s3_a6t"></div><div class="adv-desc" data-key="s3_a6d"></div></div>
+    </div>
+  </div>
+
+  <!-- 4: TYPES -->
+  <div class="slide" id="s4">
+    <div class="wave"></div>
+    <h2 class="pre-anim au1" data-key="s4_h2"></h2>
+    <div class="types-grid">
+      <div class="type-card tc-gloss pre-anim au2">
+        <div class="tc-photo"></div>
+        <div class="type-name" data-key="s4_t1n"></div>
+        <div class="type-tag tag-g" data-key="s4_t1tag"></div>
+        <div class="type-desc" data-key="s4_t1d"></div>
+        <div class="type-feats">
+          <div class="type-feat" data-key="s4_t1f1"></div>
+          <div class="type-feat" data-key="s4_t1f2"></div>
+          <div class="type-feat" data-key="s4_t1f3"></div>
+        </div>
+      </div>
+      <div class="type-card tc-matte pre-anim au3">
+        <div class="tc-photo"></div>
+        <div class="type-name" data-key="s4_t2n"></div>
+        <div class="type-tag tag-m" data-key="s4_t2tag"></div>
+        <div class="type-desc" data-key="s4_t2d"></div>
+        <div class="type-feats">
+          <div class="type-feat" data-key="s4_t2f1"></div>
+          <div class="type-feat" data-key="s4_t2f2"></div>
+          <div class="type-feat" data-key="s4_t2f3"></div>
+        </div>
+      </div>
+      <div class="type-card tc-satin pre-anim au4">
+        <div class="tc-photo"></div>
+        <div class="type-name" data-key="s4_t3n"></div>
+        <div class="type-tag tag-s" data-key="s4_t3tag"></div>
+        <div class="type-desc" data-key="s4_t3d"></div>
+        <div class="type-feats">
+          <div class="type-feat" data-key="s4_t3f1"></div>
+          <div class="type-feat" data-key="s4_t3f2"></div>
+          <div class="type-feat" data-key="s4_t3f3"></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 5: LIFESPAN -->
+  <div class="slide" id="s5">
+    <div class="wave"></div>
+    <h2 class="pre-anim au1" data-key="s5_h2"></h2>
+    <div class="bars">
+      <div class="bar-row"><div class="bar-name" data-key="s5_b1n"></div><div class="bar-track"><div class="bar-fill bf1"></div></div><div class="bar-val" style="color:var(--gold-lt)" data-key="s5_b1v"></div></div>
+      <div class="bar-row"><div class="bar-name" data-key="s5_b2n"></div><div class="bar-track"><div class="bar-fill bf2"></div></div><div class="bar-val" data-key="s5_b2v"></div></div>
+      <div class="bar-row"><div class="bar-name" data-key="s5_b3n"></div><div class="bar-track"><div class="bar-fill bf3"></div></div><div class="bar-val" data-key="s5_b3v"></div></div>
+      <div class="bar-row"><div class="bar-name" data-key="s5_b4n"></div><div class="bar-track"><div class="bar-fill bf4"></div></div><div class="bar-val" data-key="s5_b4v"></div></div>
+      <div class="bar-row"><div class="bar-name" data-key="s5_b5n"></div><div class="bar-track"><div class="bar-fill bf5"></div></div><div class="bar-val" data-key="s5_b5v"></div></div>
+    </div>
+    <div class="bar-note pre-anim au6" data-key="s5_note"></div>
+  </div>
+
+  <!-- 6: INSTALLATION -->
+  <div class="slide" id="s6">
+    <div class="wave"></div>
+    <div class="bg-photo"></div>
+    <h2 class="pre-anim au1" data-key="s6_h2"></h2>
+    <div class="steps">
+      <div class="step pre-anim au2"><div class="step-n">1</div><div class="step-t" data-key="s6_s1t"></div><div class="step-d" data-key="s6_s1d"></div></div>
+      <div class="step pre-anim au3"><div class="step-n">2</div><div class="step-t" data-key="s6_s2t"></div><div class="step-d" data-key="s6_s2d"></div></div>
+      <div class="step pre-anim au4"><div class="step-n">3</div><div class="step-t" data-key="s6_s3t"></div><div class="step-d" data-key="s6_s3d"></div></div>
+      <div class="step pre-anim au5"><div class="step-n">4</div><div class="step-t" data-key="s6_s4t"></div><div class="step-d" data-key="s6_s4d"></div></div>
+    </div>
+    <div class="inst-fact pre-anim au6" data-key="s6_fact"></div>
+  </div>
+
+  <!-- 7: DUEL — натяжной vs гипсокартон -->
+  <div class="slide" id="s7">
+    <div class="wave"></div>
+    <h2 class="pre-anim au1" data-key="s7_h2"></h2>
+    <div class="duel-wrap pre-anim au2">
+      <div class="duel-col duel-col-gkl">
+        <div class="duel-header" data-key="s7_gkl_title"></div>
+        <div class="duel-item"><span class="duel-icon">💦</span><span data-key="s7_gkl_1"></span></div>
+        <div class="duel-item"><span class="duel-icon">🔨</span><span data-key="s7_gkl_2"></span></div>
+        <div class="duel-item"><span class="duel-icon">🕰️</span><span data-key="s7_gkl_3"></span></div>
+        <div class="duel-item has-svg">
+          <svg class="duel-icon-svg" viewBox="0 0 24 16" xmlns="http://www.w3.org/2000/svg">
+            <g fill="#E06C75">
+              <ellipse cx="6" cy="8" rx="4" ry="3.2"/>
+              <ellipse cx="12" cy="8" rx="3.5" ry="2.6"/>
+              <circle cx="18" cy="8" r="3"/>
+              <line x1="20.5" y1="6" x2="23" y2="3.5" stroke="#E06C75" stroke-width="1"/>
+              <line x1="20.5" y1="10" x2="23" y2="12.5" stroke="#E06C75" stroke-width="1"/>
+              <line x1="6" y1="11" x2="5" y2="14.5" stroke="#E06C75" stroke-width="1"/>
+              <line x1="9" y1="11" x2="9.5" y2="14.5" stroke="#E06C75" stroke-width="1"/>
+              <line x1="12" y1="10" x2="13" y2="14" stroke="#E06C75" stroke-width="1"/>
+            </g>
+          </svg>
+          <span data-key="s7_gkl_4"></span>
+        </div>
+        <div class="duel-item"><span class="duel-icon">💸</span><span data-key="s7_gkl_5"></span></div>
+      </div>
+      <div class="duel-divider"><div class="duel-tick"></div><div class="duel-vs">VS</div><div class="duel-tick"></div></div>
+      <div class="duel-col duel-col-nat">
+        <div class="duel-header" data-key="s7_nat_title"></div>
+        <div class="duel-item"><span class="duel-icon">✅</span><span data-key="s7_nat_1"></span></div>
+        <div class="duel-item"><span class="duel-icon">✅</span><span data-key="s7_nat_2"></span></div>
+        <div class="duel-item"><span class="duel-icon">✅</span><span data-key="s7_nat_3"></span></div>
+        <div class="duel-item"><span class="duel-icon">✅</span><span data-key="s7_nat_4"></span></div>
+        <div class="duel-item"><span class="duel-icon">✅</span><span data-key="s7_nat_5"></span></div>
+      </div>
+    </div>
+
+    <!-- TERMITE WARNING BANNER -->
+    <div class="termite-banner">
+      <div class="termite-svg-wrap">
+        <svg viewBox="0 0 80 50" xmlns="http://www.w3.org/2000/svg">
+          <!-- gypsum board slice being eaten -->
+          <rect x="2" y="6" width="14" height="38" rx="1.5" fill="#3a4060" opacity="0.5"/>
+          <rect x="2" y="6" width="14" height="5" rx="1.5" fill="#E06C75" opacity="0.4"/>
+          <!-- chewed holes -->
+          <circle cx="9" cy="18" r="2.2" fill="#0B0F1A"/>
+          <circle cx="12" cy="26" r="1.6" fill="#0B0F1A"/>
+          <circle cx="7" cy="32" r="1.9" fill="#0B0F1A"/>
+          <!-- termite -->
+          <g class="tm-body">
+            <!-- antennae -->
+            <line class="tm-antenna" x1="60" y1="22" x2="68" y2="16" stroke="#E0A0A8" stroke-width="1.4" stroke-linecap="round"/>
+            <line class="tm-antenna" x1="60" y1="26" x2="68" y2="30" stroke="#E0A0A8" stroke-width="1.4" stroke-linecap="round"/>
+            <!-- head -->
+            <circle cx="58" cy="24" r="6" fill="#E06C75"/>
+            <!-- mandibles -->
+            <path d="M64 21 L69 19 M64 27 L69 29" stroke="#C04550" stroke-width="1.4" stroke-linecap="round" fill="none"/>
+            <!-- thorax -->
+            <ellipse cx="47" cy="24" rx="8" ry="6" fill="#D85F69"/>
+            <!-- abdomen -->
+            <ellipse cx="32" cy="24" rx="12" ry="7.5" fill="#E8C98A"/>
+            <!-- segment lines on abdomen -->
+            <path d="M28 17.5 Q28 24 28 30.5 M35 17 Q35 24 35 31 M22 18.5 Q22 24 22 29.5" stroke="#C9A96E" stroke-width="0.8" fill="none" opacity="0.6"/>
+            <!-- legs -->
+            <g stroke="#C04550" stroke-width="1.4" stroke-linecap="round">
+              <line class="tm-leg" x1="44" y1="29" x2="42" y2="36"/>
+              <line class="tm-leg" x1="48" y1="29" x2="49" y2="36"/>
+              <line class="tm-leg" x1="52" y1="29" x2="55" y2="35"/>
+            </g>
+          </g>
+        </svg>
+      </div>
+      <div class="termite-text">
+        <div class="termite-title" data-key="s7_termite_title"></div>
+        <div class="termite-desc" data-key="s7_termite_desc"></div>
+      </div>
+    </div>
+  </div>
+
+  </div>
+
+  <!-- 7b: FLOOD -->
+  <div class="slide" id="s7b">
+    <div class="wave"></div>
+    <div class="prob-slide">
+      <div class="prob-badge gkl-badge"><span data-key="p1_badge"></span></div>
+      <div class="prob-vs-wrap">
+        <div class="prob-side prob-bad">
+          <div class="prob-icon-wrap">
+            <svg viewBox="0 0 100 80" width="100" height="80">
+              <!-- ceiling cracking and sagging -->
+              <rect x="5" y="5" width="90" height="12" rx="2" fill="#3a4060" opacity="0.7"/>
+              <!-- water droplets falling through -->
+              <ellipse cx="25" cy="24" rx="3" ry="4" fill="#7EB8F7" opacity="0.8"/>
+              <ellipse cx="50" cy="20" rx="2.5" ry="3.5" fill="#7EB8F7" opacity="0.9"/>
+              <ellipse cx="75" cy="26" rx="3" ry="4.5" fill="#7EB8F7" opacity="0.8"/>
+              <!-- GKL panel swelling and falling apart -->
+              <rect x="8" y="30" width="38" height="20" rx="2" fill="#5a6080" transform="rotate(8,27,40)"/>
+              <rect x="54" y="33" width="35" height="18" rx="2" fill="#5a6080" transform="rotate(-10,71,42)"/>
+              <!-- rubble pieces falling -->
+              <rect x="20" y="55" width="12" height="8" rx="1" fill="#4a5070" transform="rotate(15,26,59)"/>
+              <rect x="60" y="58" width="10" height="7" rx="1" fill="#4a5070" transform="rotate(-20,65,61)"/>
+              <!-- crack line across ceiling -->
+              <path d="M5 11 L35 14 L50 10 L75 13 L95 11" stroke="#E06C75" stroke-width="1.5" fill="none" stroke-dasharray="3,2"/>
+              <!-- water puddle on floor -->
+              <ellipse cx="50" cy="73" rx="35" ry="6" fill="#7EB8F7" opacity="0.2"/>
+              <!-- X mark -->
+              <text x="50" y="78" text-anchor="middle" fill="#E06C75" font-size="9" font-weight="bold">✗ ГИПСОКАРТОН</text>
+            </svg>
+          </div>
+          <div class="prob-label bad-label" data-key="p1_bad_label"></div>
+          <ul class="prob-list bad-list">
+            <li data-key="p1_bad_1"></li>
+            <li data-key="p1_bad_2"></li>
+            <li data-key="p1_bad_3"></li>
+          </ul>
+        </div>
+        <div class="prob-divider">VS</div>
+        <div class="prob-side prob-good">
+          <div class="prob-icon-wrap">
+            <svg viewBox="0 0 100 80" width="100" height="80">
+              <!-- stretch ceiling fabric holding water -->
+              <path d="M5 15 Q50 10 95 15 Q50 50 5 15Z" fill="#C9A96E" opacity="0.25"/>
+              <path d="M5 15 Q50 10 95 15" stroke="#C9A96E" stroke-width="2.5" fill="none"/>
+              <!-- water collected in the sag -->
+              <path d="M15 17 Q50 48 85 17 Q50 52 15 17Z" fill="#7EB8F7" opacity="0.35"/>
+              <!-- water being drained via valve -->
+              <circle cx="50" cy="48" r="4" fill="#C9A96E" opacity="0.8"/>
+              <line x1="50" y1="52" x2="50" y2="62" stroke="#7EB8F7" stroke-width="2" stroke-dasharray="2,2"/>
+              <!-- tidy room below -->
+              <rect x="10" y="64" width="80" height="4" rx="1" fill="#2a3060" opacity="0.5"/>
+              <!-- checkmark -->
+              <text x="50" y="78" text-anchor="middle" fill="#C9A96E" font-size="9" font-weight="bold">✓ НАТЯЖНОЙ</text>
+            </svg>
+          </div>
+          <div class="prob-label good-label" data-key="p1_good_label"></div>
+          <ul class="prob-list good-list">
+            <li data-key="p1_good_1"></li>
+            <li data-key="p1_good_2"></li>
+            <li data-key="p1_good_3"></li>
+          </ul>
+        </div>
+      </div>
+      <div class="prob-fact pre-anim au5" data-key="p1_fact"></div>
+    </div>
+  </div>
+
+  <!-- 7c: INSTALLATION TIME -->
+  <div class="slide" id="s7c">
+    <div class="wave"></div>
+    <div class="prob-slide">
+      <div class="prob-badge gkl-badge"><span data-key="p2_badge"></span></div>
+      <div class="prob-vs-wrap">
+        <div class="prob-side prob-bad">
+          <div class="prob-icon-wrap">
+            <svg viewBox="0 0 100 80" width="100" height="80">
+              <!-- dusty mess -->
+              <circle cx="20" cy="60" r="12" fill="#5a6080" opacity="0.3"/>
+              <circle cx="50" cy="65" r="10" fill="#5a6080" opacity="0.25"/>
+              <circle cx="80" cy="60" r="12" fill="#5a6080" opacity="0.3"/>
+              <!-- worker with heavy tools -->
+              <rect x="42" y="28" width="16" height="22" rx="3" fill="#4a5070"/>
+              <circle cx="50" cy="22" r="8" fill="#6a7090"/>
+              <!-- calendar showing 10 days -->
+              <rect x="62" y="8" width="30" height="28" rx="3" fill="#3a4060"/>
+              <rect x="62" y="8" width="30" height="8" rx="2" fill="#E06C75"/>
+              <text x="77" y="15" text-anchor="middle" fill="white" font-size="6" font-weight="bold">10</text>
+              <text x="77" y="28" text-anchor="middle" fill="#E06C75" font-size="7" font-weight="bold" data-key="p2_days_label">ДНЕЙ</text>
+              <!-- dust particles -->
+              <circle cx="30" cy="40" r="2" fill="#8a90b0" opacity="0.6"/>
+              <circle cx="65" cy="45" r="1.5" fill="#8a90b0" opacity="0.5"/>
+              <circle cx="15" cy="35" r="2.5" fill="#8a90b0" opacity="0.4"/>
+              <circle cx="85" cy="38" r="2" fill="#8a90b0" opacity="0.6"/>
+              <text x="50" y="78" text-anchor="middle" fill="#E06C75" font-size="8" font-weight="bold">✗</text>
+            </svg>
+          </div>
+          <div class="prob-label bad-label" data-key="p2_bad_label"></div>
+          <ul class="prob-list bad-list">
+            <li data-key="p2_bad_1"></li>
+            <li data-key="p2_bad_2"></li>
+            <li data-key="p2_bad_3"></li>
+          </ul>
+        </div>
+        <div class="prob-divider">VS</div>
+        <div class="prob-side prob-good">
+          <div class="prob-icon-wrap">
+            <svg viewBox="0 0 100 80" width="100" height="80">
+              <!-- clean room -->
+              <rect x="10" y="55" width="80" height="4" rx="1" fill="#2a3060" opacity="0.5"/>
+              <!-- heat gun -->
+              <rect x="30" y="30" width="25" height="10" rx="3" fill="#C9A96E" opacity="0.8"/>
+              <path d="M55 33 L70 30 L70 40 L55 37Z" fill="#C9A96E" opacity="0.6"/>
+              <!-- heat waves -->
+              <path d="M72 28 Q80 31 72 35 Q80 38 72 42" stroke="#E8C98A" stroke-width="1.5" fill="none" stroke-linecap="round"/>
+              <!-- stretch fabric -->
+              <path d="M5 20 Q50 16 95 20" stroke="#C9A96E" stroke-width="2.5" fill="none"/>
+              <!-- clock showing 4 hours -->
+              <circle cx="78" cy="15" r="11" fill="#1a2040" stroke="#C9A96E" stroke-width="1.5"/>
+              <line x1="78" y1="15" x2="78" y2="8" stroke="#C9A96E" stroke-width="1.5" stroke-linecap="round"/>
+              <line x1="78" y1="15" x2="84" y2="17" stroke="#C9A96E" stroke-width="1.5" stroke-linecap="round"/>
+              <text x="50" y="78" text-anchor="middle" fill="#C9A96E" font-size="8" font-weight="bold">✓</text>
+            </svg>
+          </div>
+          <div class="prob-label good-label" data-key="p2_good_label"></div>
+          <ul class="prob-list good-list">
+            <li data-key="p2_good_1"></li>
+            <li data-key="p2_good_2"></li>
+            <li data-key="p2_good_3"></li>
+          </ul>
+        </div>
+      </div>
+      <div class="prob-fact pre-anim au5" data-key="p2_fact"></div>
+    </div>
+  </div>
+
+  <!-- 7d: CRACKS -->
+  <div class="slide" id="s7d">
+    <div class="wave"></div>
+    <div class="prob-slide">
+      <div class="prob-badge gkl-badge"><span data-key="p3_badge"></span></div>
+      <div class="prob-vs-wrap">
+        <div class="prob-side prob-bad">
+          <div class="prob-icon-wrap">
+            <svg viewBox="0 0 100 80" width="100" height="80">
+              <!-- GKL ceiling with cracks -->
+              <rect x="5" y="8" width="90" height="14" rx="2" fill="#3a4060" opacity="0.7"/>
+              <!-- crack lines -->
+              <path d="M15 10 L28 15 L22 22 L38 18 L35 8" stroke="#E06C75" stroke-width="1.8" fill="none" stroke-linecap="round"/>
+              <path d="M55 9 L62 14 L58 20 L70 17 L75 22 L85 15" stroke="#E06C75" stroke-width="1.6" fill="none" stroke-linecap="round"/>
+              <path d="M40 18 L45 22" stroke="#E06C75" stroke-width="1.2" fill="none"/>
+              <!-- joints showing seams -->
+              <line x1="50" y1="8" x2="50" y2="22" stroke="#b04050" stroke-width="1" stroke-dasharray="2,2" opacity="0.8"/>
+              <!-- pieces falling -->
+              <rect x="18" y="30" width="14" height="9" rx="1" fill="#4a5070" transform="rotate(20,25,34)" opacity="0.8"/>
+              <rect x="65" y="28" width="10" height="7" rx="1" fill="#4a5070" transform="rotate(-15,70,31)" opacity="0.7"/>
+              <!-- building foundation shifting -->
+              <path d="M10 70 L30 65 L50 68 L70 63 L90 67" stroke="#8a90b0" stroke-width="1.5" fill="none" stroke-dasharray="4,2"/>
+              <text x="50" y="78" text-anchor="middle" fill="#E06C75" font-size="8" font-weight="bold">✗</text>
+            </svg>
+          </div>
+          <div class="prob-label bad-label" data-key="p3_bad_label"></div>
+          <ul class="prob-list bad-list">
+            <li data-key="p3_bad_1"></li>
+            <li data-key="p3_bad_2"></li>
+            <li data-key="p3_bad_3"></li>
+          </ul>
+        </div>
+        <div class="prob-divider">VS</div>
+        <div class="prob-side prob-good">
+          <div class="prob-icon-wrap">
+            <svg viewBox="0 0 100 80" width="100" height="80">
+              <!-- elastic fabric stretching smoothly -->
+              <path d="M5 20 Q50 16 95 20" stroke="#C9A96E" stroke-width="3" fill="none" stroke-linecap="round"/>
+              <!-- arrows showing elasticity -->
+              <path d="M30 30 L20 40 M30 30 L40 40" stroke="#C9A96E" stroke-width="1.5" fill="none" stroke-linecap="round"/>
+              <path d="M70 30 L60 40 M70 30 L80 40" stroke="#C9A96E" stroke-width="1.5" fill="none" stroke-linecap="round"/>
+              <!-- building shifting below but ceiling staying smooth -->
+              <path d="M10 60 L30 55 L50 58 L70 53 L90 57" stroke="#8a90b0" stroke-width="1.5" fill="none" stroke-dasharray="4,2"/>
+              <!-- smooth arrows between -->
+              <text x="50" y="50" text-anchor="middle" fill="#C9A96E" font-size="18" opacity="0.6">↕</text>
+              <text x="50" y="74" text-anchor="middle" fill="#C9A96E" font-size="8" font-weight="bold">✓</text>
+            </svg>
+          </div>
+          <div class="prob-label good-label" data-key="p3_good_label"></div>
+          <ul class="prob-list good-list">
+            <li data-key="p3_good_1"></li>
+            <li data-key="p3_good_2"></li>
+            <li data-key="p3_good_3"></li>
+          </ul>
+        </div>
+      </div>
+      <div class="prob-fact pre-anim au5" data-key="p3_fact"></div>
+    </div>
+  </div>
+
+  <!-- 7e: TERMITES -->
+  <div class="slide" id="s7e">
+    <div class="wave"></div>
+    <div class="prob-slide">
+      <div class="prob-badge gkl-badge"><span data-key="p4_badge"></span></div>
+      <div class="prob-vs-wrap">
+        <div class="prob-side prob-bad">
+          <div class="prob-icon-wrap">
+            <svg viewBox="0 0 100 80" width="100" height="80">
+              <!-- GKL cross-section being eaten -->
+              <rect x="5" y="15" width="50" height="35" rx="2" fill="#3a4060" opacity="0.7"/>
+              <rect x="5" y="15" width="50" height="5" rx="1" fill="#6a7090" opacity="0.5"/>
+              <rect x="5" y="45" width="50" height="5" rx="1" fill="#6a7090" opacity="0.5"/>
+              <!-- eaten holes -->
+              <circle cx="20" cy="28" r="4" fill="#0B0F1A"/>
+              <circle cx="35" cy="35" r="3.5" fill="#0B0F1A"/>
+              <circle cx="15" cy="40" r="3" fill="#0B0F1A"/>
+              <circle cx="42" cy="25" r="2.5" fill="#0B0F1A"/>
+              <!-- termites -->
+              <g transform="translate(55,20) scale(0.42)">
+                <ellipse cx="32" cy="24" rx="12" ry="7.5" fill="#E8C98A"/>
+                <ellipse cx="47" cy="24" rx="8" ry="6" fill="#D85F69"/>
+                <circle cx="58" cy="24" r="6" fill="#E06C75"/>
+                <path d="M64 21 L69 19 M64 27 L69 29" stroke="#C04550" stroke-width="1.4" stroke-linecap="round" fill="none"/>
+                <line x1="44" y1="29" x2="42" y2="36" stroke="#C04550" stroke-width="1.4" stroke-linecap="round"/>
+                <line x1="48" y1="29" x2="49" y2="36" stroke="#C04550" stroke-width="1.4" stroke-linecap="round"/>
+                <line x1="52" y1="29" x2="55" y2="35" stroke="#C04550" stroke-width="1.4" stroke-linecap="round"/>
+              </g>
+              <g transform="translate(60,45) scale(0.35) rotate(180,40,20)">
+                <ellipse cx="32" cy="24" rx="12" ry="7.5" fill="#E8C98A"/>
+                <ellipse cx="47" cy="24" rx="8" ry="6" fill="#D85F69"/>
+                <circle cx="58" cy="24" r="6" fill="#E06C75"/>
+              </g>
+              <text x="50" y="78" text-anchor="middle" fill="#E06C75" font-size="8" font-weight="bold">✗</text>
+            </svg>
+          </div>
+          <div class="prob-label bad-label" data-key="p4_bad_label"></div>
+          <ul class="prob-list bad-list">
+            <li data-key="p4_bad_1"></li>
+            <li data-key="p4_bad_2"></li>
+            <li data-key="p4_bad_3"></li>
+          </ul>
+        </div>
+        <div class="prob-divider">VS</div>
+        <div class="prob-side prob-good">
+          <div class="prob-icon-wrap">
+            <svg viewBox="0 0 100 80" width="100" height="80">
+              <!-- PVC sheet with termite being rejected -->
+              <rect x="10" y="25" width="55" height="20" rx="3" fill="#C9A96E" opacity="0.3"/>
+              <rect x="10" y="25" width="55" height="20" rx="3" stroke="#C9A96E" stroke-width="1.5" fill="none"/>
+              <text x="37" y="38" text-anchor="middle" fill="#C9A96E" font-size="7" font-weight="600">PVC</text>
+              <!-- termite bouncing off -->
+              <g transform="translate(65,22) scale(0.38)">
+                <ellipse cx="32" cy="24" rx="12" ry="7.5" fill="#E8C98A" opacity="0.5"/>
+                <ellipse cx="47" cy="24" rx="8" ry="6" fill="#D85F69" opacity="0.5"/>
+                <circle cx="58" cy="24" r="6" fill="#E06C75" opacity="0.5"/>
+              </g>
+              <!-- repel arrows -->
+              <path d="M66 35 L78 30 L76 35 L82 33" stroke="#6FD08C" stroke-width="1.5" fill="none" stroke-linecap="round"/>
+              <!-- shield icon -->
+              <path d="M80 50 Q80 62 90 65 Q100 62 100 50 L100 44 L80 44Z" fill="#C9A96E" opacity="0.2" stroke="#C9A96E" stroke-width="1"/>
+              <text x="90" y="58" text-anchor="middle" fill="#C9A96E" font-size="10">🛡</text>
+              <text x="50" y="78" text-anchor="middle" fill="#C9A96E" font-size="8" font-weight="bold">✓</text>
+            </svg>
+          </div>
+          <div class="prob-label good-label" data-key="p4_good_label"></div>
+          <ul class="prob-list good-list">
+            <li data-key="p4_good_1"></li>
+            <li data-key="p4_good_2"></li>
+            <li data-key="p4_good_3"></li>
+          </ul>
+        </div>
+      </div>
+      <div class="prob-fact pre-anim au5" data-key="p4_fact"></div>
+    </div>
+  </div>
+
+  <!-- 7f: MOLD -->
+  <div class="slide" id="s7f">
+    <div class="wave"></div>
+    <div class="prob-slide">
+      <div class="prob-badge gkl-badge"><span data-key="p5_badge"></span></div>
+      <div class="prob-vs-wrap">
+        <div class="prob-side prob-bad">
+          <div class="prob-icon-wrap">
+            <svg viewBox="0 0 100 80" width="100" height="80">
+              <!-- GKL with mold spots -->
+              <rect x="5" y="10" width="60" height="40" rx="2" fill="#3a4060" opacity="0.7"/>
+              <!-- mold colonies -->
+              <circle cx="18" cy="22" r="6" fill="#2d5a27" opacity="0.8"/>
+              <circle cx="22" cy="18" r="4" fill="#3a7a32" opacity="0.7"/>
+              <circle cx="14" cy="18" r="3.5" fill="#2a4f24" opacity="0.8"/>
+              <circle cx="38" cy="30" r="7" fill="#2d5a27" opacity="0.75"/>
+              <circle cx="44" cy="26" r="5" fill="#3a7a32" opacity="0.7"/>
+              <circle cx="55" cy="20" r="4.5" fill="#2d5a27" opacity="0.8"/>
+              <circle cx="50" cy="16" r="3" fill="#3a7a32" opacity="0.65"/>
+              <!-- mold spores floating -->
+              <circle cx="75" cy="15" r="2" fill="#3a7a32" opacity="0.5"/>
+              <circle cx="80" cy="25" r="1.5" fill="#2d5a27" opacity="0.4"/>
+              <circle cx="72" cy="30" r="1.8" fill="#3a7a32" opacity="0.45"/>
+              <circle cx="85" cy="18" r="1.2" fill="#3a7a32" opacity="0.5"/>
+              <!-- humidity indicator -->
+              <path d="M80 42 Q84 35 80 30 Q76 35 80 42Z" fill="#7EB8F7" opacity="0.6"/>
+              <text x="50" y="62" text-anchor="middle" fill="#E06C75" font-size="7" opacity="0.8" data-key="p5_spores">споры в воздухе</text>
+              <text x="50" y="72" text-anchor="middle" fill="#E06C75" font-size="8" font-weight="bold">✗</text>
+            </svg>
+          </div>
+          <div class="prob-label bad-label" data-key="p5_bad_label"></div>
+          <ul class="prob-list bad-list">
+            <li data-key="p5_bad_1"></li>
+            <li data-key="p5_bad_2"></li>
+            <li data-key="p5_bad_3"></li>
+          </ul>
+        </div>
+        <div class="prob-divider">VS</div>
+        <div class="prob-side prob-good">
+          <div class="prob-icon-wrap">
+            <svg viewBox="0 0 100 80" width="100" height="80">
+              <!-- smooth PVC surface -->
+              <path d="M5 25 Q50 20 95 25" stroke="#C9A96E" stroke-width="3" fill="none" stroke-linecap="round"/>
+              <!-- water bead rolling off (hydrophobic) -->
+              <circle cx="30" cy="30" r="5" fill="#7EB8F7" opacity="0.7"/>
+              <circle cx="31" cy="30" r="5" fill="none" stroke="#7EB8F7" stroke-width="1" opacity="0.4"/>
+              <!-- arrow showing water rolling off -->
+              <path d="M33 33 L40 40 L38 36 L44 38" stroke="#7EB8F7" stroke-width="1.5" fill="none" stroke-linecap="round"/>
+              <!-- no pores symbol -->
+              <circle cx="75" cy="35" r="14" fill="#1a2040" stroke="#6FD08C" stroke-width="1.5"/>
+              <circle cx="75" cy="31" r="3" fill="#2d5a27" opacity="0.4"/>
+              <line x1="64" y1="24" x2="86" y2="46" stroke="#E06C75" stroke-width="2.5" stroke-linecap="round"/>
+              <text x="50" y="72" text-anchor="middle" fill="#C9A96E" font-size="8" font-weight="bold">✓</text>
+            </svg>
+          </div>
+          <div class="prob-label good-label" data-key="p5_good_label"></div>
+          <ul class="prob-list good-list">
+            <li data-key="p5_good_1"></li>
+            <li data-key="p5_good_2"></li>
+            <li data-key="p5_good_3"></li>
+          </ul>
+        </div>
+      </div>
+      <div class="prob-fact pre-anim au5" data-key="p5_fact"></div>
+    </div>
+  </div>
+
+  <!-- 7g: MAINTENANCE COST -->
+  <div class="slide" id="s7g">
+    <div class="wave"></div>
+    <div class="prob-slide">
+      <div class="prob-badge gkl-badge"><span data-key="p6_badge"></span></div>
+      <div class="prob-vs-wrap">
+        <div class="prob-side prob-bad">
+          <div class="prob-icon-wrap">
+            <svg viewBox="0 0 100 80" width="100" height="80">
+              <!-- repeating repair cycle -->
+              <circle cx="30" cy="35" r="22" fill="none" stroke="#E06C75" stroke-width="1.5" stroke-dasharray="4,3" opacity="0.6"/>
+              <text x="30" y="30" text-anchor="middle" fill="#E06C75" font-size="7" font-weight="bold">Год 5</text>
+              <text x="30" y="40" text-anchor="middle" fill="rgba(240,239,234,.6)" font-size="6">покраска</text>
+              <!-- arrow cycling -->
+              <path d="M50 20 Q65 20 68 35 Q65 50 50 50" stroke="#E06C75" stroke-width="1.5" fill="none" stroke-linecap="round" marker-end="url(#arr)"/>
+              <text x="72" y="38" text-anchor="middle" fill="#E06C75" font-size="7" font-weight="bold">Год</text>
+              <text x="72" y="46" text-anchor="middle" fill="#E06C75" font-size="7" font-weight="bold">10</text>
+              <!-- money flying away -->
+              <text x="82" y="20" font-size="14">💸</text>
+              <text x="82" y="55" font-size="14">💸</text>
+              <text x="50" y="72" text-anchor="middle" fill="#E06C75" font-size="8" font-weight="bold">✗</text>
+            </svg>
+          </div>
+          <div class="prob-label bad-label" data-key="p6_bad_label"></div>
+          <ul class="prob-list bad-list">
+            <li data-key="p6_bad_1"></li>
+            <li data-key="p6_bad_2"></li>
+            <li data-key="p6_bad_3"></li>
+          </ul>
+        </div>
+        <div class="prob-divider">VS</div>
+        <div class="prob-side prob-good">
+          <div class="prob-icon-wrap">
+            <svg viewBox="0 0 100 80" width="100" height="80">
+              <!-- flat cost line -->
+              <line x1="10" y1="45" x2="90" y2="45" stroke="#C9A96E" stroke-width="2.5" stroke-linecap="round"/>
+              <!-- year markers -->
+              <line x1="10" y1="42" x2="10" y2="48" stroke="#C9A96E" stroke-width="1.5"/>
+              <line x1="50" y1="42" x2="50" y2="48" stroke="#C9A96E" stroke-width="1.5"/>
+              <line x1="90" y1="42" x2="90" y2="48" stroke="#C9A96E" stroke-width="1.5"/>
+              <text x="10" y="56" text-anchor="middle" fill="rgba(240,239,234,.5)" font-size="6">0</text>
+              <text x="50" y="56" text-anchor="middle" fill="rgba(240,239,234,.5)" font-size="6">12</text>
+              <text x="90" y="56" text-anchor="middle" fill="rgba(240,239,234,.5)" font-size="6">25</text>
+              <!-- shield / no maintenance -->
+              <text x="50" y="28" text-anchor="middle" fill="#C9A96E" font-size="22" opacity="0.7">🛡️</text>
+              <text x="50" y="72" text-anchor="middle" fill="#C9A96E" font-size="8" font-weight="bold">✓</text>
+            </svg>
+          </div>
+          <div class="prob-label good-label" data-key="p6_good_label"></div>
+          <ul class="prob-list good-list">
+            <li data-key="p6_good_1"></li>
+            <li data-key="p6_good_2"></li>
+            <li data-key="p6_good_3"></li>
+          </ul>
+        </div>
+      </div>
+      <div class="prob-fact pre-anim au5" data-key="p6_fact"></div>
+    </div>
+  </div>
+
+  <!-- 8: COST OF OWNERSHIP CHART -->
+  <div class="slide" id="s8">
+    <div class="wave"></div>
+    <h2 class="pre-anim au1" data-key="s8_h2"></h2>
+    <div class="chart-sub pre-anim au2" data-key="s8_sub"></div>
+    <div class="cost-chart pre-anim au3">
+      <div class="chart-svg-wrap">
+        <svg class="cost-svg" viewBox="0 0 400 175" preserveAspectRatio="xMidYMid meet">
+          <!-- grid lines -->
+          <line x1="40" y1="10"  x2="390" y2="10"  stroke="rgba(255,255,255,.06)" stroke-width="1"/>
+          <line x1="40" y1="45"  x2="390" y2="45"  stroke="rgba(255,255,255,.06)" stroke-width="1"/>
+          <line x1="40" y1="80"  x2="390" y2="80"  stroke="rgba(255,255,255,.06)" stroke-width="1"/>
+          <line x1="40" y1="115" x2="390" y2="115" stroke="rgba(255,255,255,.06)" stroke-width="1"/>
+          <line x1="40" y1="150" x2="390" y2="150" stroke="rgba(255,255,255,.06)" stroke-width="1"/>
+          <!-- y-axis -->
+          <line x1="40" y1="10" x2="40" y2="155" stroke="rgba(255,255,255,.15)" stroke-width="1"/>
+          <!-- y labels -->
+          <text x="36" y="13"  text-anchor="end" fill="rgba(240,239,234,.35)" font-size="8">500k</text>
+          <text x="36" y="48"  text-anchor="end" fill="rgba(240,239,234,.35)" font-size="8">400k</text>
+          <text x="36" y="83"  text-anchor="end" fill="rgba(240,239,234,.35)" font-size="8">300k</text>
+          <text x="36" y="118" text-anchor="end" fill="rgba(240,239,234,.35)" font-size="8">200k</text>
+          <text x="36" y="153" text-anchor="end" fill="rgba(240,239,234,.35)" font-size="8">100k</text>
+          <!-- x labels -->
+          <text x="40"  y="168" text-anchor="middle" fill="rgba(240,239,234,.35)" font-size="8">0</text>
+          <text x="110" y="168" text-anchor="middle" fill="rgba(240,239,234,.35)" font-size="8">5</text>
+          <text x="180" y="168" text-anchor="middle" fill="rgba(240,239,234,.35)" font-size="8">10</text>
+          <text x="250" y="168" text-anchor="middle" fill="rgba(240,239,234,.35)" font-size="8">15</text>
+          <text x="320" y="168" text-anchor="middle" fill="rgba(240,239,234,.35)" font-size="8">20</text>
+          <text x="390" y="168" text-anchor="middle" fill="rgba(240,239,234,.35)" font-size="8">25</text>
+          <!-- x axis label -->
+          <text x="215" y="178" text-anchor="middle" fill="rgba(240,239,234,.25)" font-size="7" class="chart-years-label" data-key="s8_years"></text>
+          <!-- GKL line: starts ~150k, every 5yr +80k repair, spikes at flood events -->
+          <!-- points: (40,115) → (110,97) → (110,55) → (180,40) → (180,18) → (250,10) → (250,14) → (320,10) → (390,10) -->
+          <polyline id="gkl-line"
+            points="40,115 110,97 110,55 180,38 180,15 250,10 250,14 320,10 390,10"
+            fill="none" stroke="#E06C75" stroke-width="2" stroke-linejoin="round"
+            stroke-dasharray="600" stroke-dashoffset="600">
+            <animate attributeName="stroke-dashoffset" from="600" to="0" dur="1.4s" begin="0.6s" fill="freeze"/>
+          </polyline>
+          <!-- vertical drop markers (repair moments) -->
+          <line x1="110" y1="97" x2="110" y2="55" stroke="#E06C75" stroke-width="1.5" stroke-dasharray="3,3" opacity=".6"/>
+          <line x1="180" y1="38" x2="180" y2="15" stroke="#E06C75" stroke-width="1.5" stroke-dasharray="3,3" opacity=".6"/>
+          <line x1="250" y1="14" x2="250" y2="10" stroke="#E06C75" stroke-width="1.5" stroke-dasharray="3,3" opacity=".6"/>
+          <!-- Natazhnoy line: flat, starts slightly higher -->
+          <polyline id="nat-line"
+            points="40,130 390,118"
+            fill="none" stroke="#C9A96E" stroke-width="2.5"
+            stroke-dasharray="380" stroke-dashoffset="380">
+            <animate attributeName="stroke-dashoffset" from="380" to="0" dur="1.2s" begin="0.4s" fill="freeze"/>
+          </polyline>
+          <!-- end dots -->
+          <circle cx="390" cy="118" r="4" fill="#C9A96E"/>
+          <circle cx="390" cy="10"  r="4" fill="#E06C75"/>
+          <!-- end value labels -->
+          <text x="395" y="121" fill="#C9A96E" font-size="8" font-weight="bold" data-key="s8_nat_end"></text>
+          <text x="395" y="13"  fill="#E06C75" font-size="8" font-weight="bold" data-key="s8_gkl_end"></text>
+          <!-- repair tooltips -->
+          <text x="113" y="76" fill="rgba(224,108,117,.7)" font-size="7" data-key="s8_repair1"></text>
+          <text x="183" y="27" fill="rgba(224,108,117,.7)" font-size="7" data-key="s8_repair2"></text>
+        </svg>
+      </div>
+      <div class="cost-legend">
+        <div class="leg-item"><div class="leg-dot" style="background:#C9A96E"></div><span data-key="s8_leg_nat"></span></div>
+        <div class="leg-item"><div class="leg-dot" style="background:#E06C75"></div><span data-key="s8_leg_gkl"></span></div>
+      </div>
+      <div class="cost-callout pre-anim au4">
+        <div class="callout-pill" data-key="s8_pill1"></div>
+        <div class="callout-pill" data-key="s8_pill2"></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 9: CTA (was 7) -->
+  <div class="slide" id="s9">
+    <div class="wave"></div>
+    <div class="bg-photo"></div>
+    <div class="glow"></div>
+    <div class="eyebrow pre-anim au1" data-key="s9_eyebrow"></div>
+    <h2 class="pre-anim au2" data-key="s9_h2"></h2>
+    <p class="cta-sub pre-anim au3" data-key="s9_sub"></p>
+    <div class="badges pre-anim au4">
+      <div class="badge" data-key="s9_b1"></div>
+      <div class="badge" data-key="s9_b2"></div>
+      <div class="badge" data-key="s9_b3"></div>
+      <div class="badge" data-key="s9_b4"></div>
+      <div class="badge">EuroConCraft</div>
+    </div>
+    <div class="g-line" style="--target-w:180px"></div>
+  </div>
+
+</div><!-- /slideshow -->
+
+<div id="dots"></div>
+<div id="controls">
+  <button class="ctrl-btn" id="prevBtn">←</button>
+  <button class="ctrl-btn" id="autoBtn" data-key="ctrl_auto"></button>
+  <button class="ctrl-btn" id="nextBtn">→</button>
+</div>
+
+<script>
+/* ════════════════════════════
+   TRANSLATIONS
+════════════════════════════ */
+const T = {
+  ru: {
+    ctrl_auto: '⏸ АВТО',
+    ctrl_auto_paused: '▶ АВТО',
+    // slide 0
+    s0_eyebrow: 'Современные решения для интерьера',
+    s0_h1: 'Натяжные<br><em>потолки</em>',
+    s0_sub: 'Почему профессионалы и дизайнеры выбирают натяжные потолки — и почему вам стоит сделать то же самое',
+    // slide 1
+    s1_eyebrow: 'Срок службы',
+    s1_lbl: 'ЛЕТ ГАРАНТИРОВАННОЙ СЛУЖБЫ',
+    s1_h2: 'Один раз — и навсегда',
+    s1_p: 'Натяжной потолок монтируется один раз и не требует покраски, шпаклёвки или замены при смене интерьера. Это инвестиция, которая окупается с первого же ремонта.',
+    // slide 2
+    s2_h2: 'Натяжной vs. альтернативы',
+    s2_col0: 'Критерий', s2_col1: 'Натяжной', s2_col2: 'Гипсокартон', s2_col3: 'Покраска', s2_col4: 'ПВХ',
+    s2_r1: 'Монтаж за 1 день',
+    s2_r2: 'Влагостойкость',
+    s2_r3: 'Защита от затопления',
+    s2_r4: 'Без подготовки основания',
+    s2_r5: 'Идеально ровная поверхность',
+    s2_r6: 'Фотопечать / любой цвет',
+    s2_r7: 'Срок службы 25+ лет',
+    // slide 3
+    s3_h2: '6 причин выбрать натяжной потолок',
+    s3_a1t:'Защита от затопления', s3_a1d:'Удерживает до 100 л воды на м². Сосед залил — вы в безопасности.',
+    s3_a2t:'Монтаж за часы',       s3_a2d:'Комната готова за день. Без пыли и грязных работ.',
+    s3_a3t:'Любой дизайн',         s3_a3d:'Матовый, глянцевый, фотопечать, звёздное небо — под ваш интерьер.',
+    s3_a4t:'Звукоизоляция',        s3_a4d:'Полотно дополнительно поглощает шум от соседей сверху.',
+    s3_a5t:'Теплоизоляция',        s3_a5d:'Воздушный зазор снижает теплопотери и расходы на отопление.',
+    s3_a6t:'Простой уход',         s3_a6d:'Влажная тряпка — и готово. Не трескается, не желтеет.',
+    // slide 4
+    s4_h2: 'Виды натяжных потолков',
+    s4_t1n:'Глянцевый', s4_t1tag:'ЗЕРКАЛЬНЫЙ',
+    s4_t1d:'Отражает свет и визуально увеличивает пространство. Идеален для гостиных.',
+    s4_t1f1:'Увеличивает комнату', s4_t1f2:'Отражает освещение', s4_t1f3:'Эффектный вечерний вид',
+    s4_t2n:'Матовый', s4_t2tag:'КЛАССИКА',
+    s4_t2d:'Нейтральное решение, напоминающее окрашенный потолок. Скрывает неровности.',
+    s4_t2f1:'Подходит любому стилю', s4_t2f2:'Нет бликов', s4_t2f3:'Фотопечать и цвета',
+    s4_t3n:'Сатиновый', s4_t3tag:'ПРЕМИУМ',
+    s4_t3d:'Лёгкий шёлковый блеск без зеркального эффекта. Выбор дизайнеров.',
+    s4_t3f1:'Благородный блеск', s4_t3f2:'Элегантный вид', s4_t3f3:'Универсален',
+    // slide 5
+    s5_h2: 'Срок службы: натяжной потолок выигрывает',
+    s5_b1n:'Натяжной',     s5_b1v:'25–30 лет',
+    s5_b2n:'Гипсокартон',  s5_b2v:'10–15 лет',
+    s5_b3n:'Покраска',     s5_b3v:'5–8 лет',
+    s5_b4n:'ПВХ-панели',   s5_b4v:'5–10 лет',
+    s5_b5n:'Плитка',       s5_b5v:'3–7 лет',
+    s5_note:'* При нормальных условиях эксплуатации и надлежащем уходе',
+    // slide 6
+    s6_h2: 'Как проходит монтаж',
+    s6_s1t:'Замер',    s6_s1d:'Специалист делает точные замеры. Полотно изготавливается на производстве.',
+    s6_s2t:'Профиль', s6_s2d:'По периметру крепится алюминиевый багет — основа для натяжения.',
+    s6_s3t:'Натяжка', s6_s3d:'Полотно прогревается тепловой пушкой и заправляется в профиль.',
+    s6_s4t:'Финиш',   s6_s4d:'Установка светильников и декора. Готово к использованию сразу.',
+    s6_fact:'Комната 20 м² монтируется за <b>3–5 часов</b>. Никакой пыли. Въезжайте в тот же день.',
+    // slide 7 — duel
+    s7_h2: 'Натяжной потолок vs. Гипсокартон',
+    s7_gkl_title: '😤 Гипсокартон',
+    s7_gkl_1: 'При затоплении — полная замена листов',
+    s7_gkl_2: 'Монтаж 5–10 дней + пыль + высыхание',
+    s7_gkl_3: 'Трещины при усадке дома — неизбежны',
+    s7_gkl_4: 'Термиты прогрызают бумажный слой ГКЛ',
+    s7_gkl_5: 'Покраска каждые 5–7 лет — доп. расходы',
+    s7_termite_title: '🐛 Термиты обожают гипсокартон',
+    s7_termite_desc: 'Картонный слой ГКЛ — это целлюлоза, любимая пища термитов. В тропическом климате Таиланда они прогрызают потолок изнутри незаметно. Натяжное ПВХ-полотно термитам несъедобно.',
+    // PROBLEM SLIDES
+    p1_badge:'💧 Проблема №1: Затопление',
+    p1_bad_label:'Гипсокартон при потопе',
+    p1_bad_1:'Листы ГКЛ мгновенно намокают и разбухают',
+    p1_bad_2:'Штукатурка и краска отслаиваются пластами',
+    p1_bad_3:'Полная замена потолка — от 2 недель и полного ремонта',
+    p1_good_label:'Натяжной потолок при потопе',
+    p1_good_1:'Удерживает до 100 л воды на м² без разрыва',
+    p1_good_2:'Сосед залил — слить воду через клапан за 20 мин',
+    p1_good_3:'Полотно возвращает первоначальную форму',
+    p1_fact:'<b>Реальный случай:</b> при прорыве трубы у соседей сверху натяжной потолок удержал 3 тонны воды — семья узнала об аварии только по провисшему потолку.',
+
+    p2_badge:'⚒️ Проблема №2: Долгий монтаж',
+    p2_bad_label:'Гипсокартон — процесс',
+    p2_bad_1:'5–10 дней пыли, грязи и шума',
+    p2_bad_2:'Высыхание шпаклёвки + грунт + покраска',
+    p2_bad_3:'Нельзя жить в квартире во время работ',
+    p2_good_label:'Натяжной — быстро и чисто',
+    p2_good_1:'3–5 часов на комнату 20 м²',
+    p2_good_2:'Никакой пыли, никаких мокрых работ',
+    p2_good_3:'Въезжайте в тот же вечер',
+    p2_fact:'<b>Сравнение:</b> монтаж ГКЛ в 2-комнатной квартире = 7–14 дней. Натяжные потолки на всю квартиру = 1 рабочий день.',
+    p2_days_label:'DAYS',
+
+    p3_badge:'🕰️ Проблема №3: Трещины',
+    p3_bad_label:'Гипсокартон трескается',
+    p3_bad_1:'Усадка нового дома неизбежно рвёт стыки',
+    p3_bad_2:'Сейсмическая активность и вибрация = трещины',
+    p3_bad_3:'Ремонт швов: шпаклёвка, покраска, запах',
+    p3_good_label:'Натяжной — без трещин',
+    p3_good_1:'Эластичное полотно компенсирует любые движения',
+    p3_good_2:'Растягивается и возвращается — без следов',
+    p3_good_3:'25 лет без единой трещины — гарантированно',
+    p3_fact:'<b>Материал:</b> ПВХ-полотно растягивается на 6–8% без деформации. Гипсокартон при малейшем смещении даёт трещину.',
+
+    p4_badge:'🐛 Проблема №4: Термиты',
+    p4_bad_label:'Гипсокартон — лакомство',
+    p4_bad_1:'Бумажный слой ГКЛ = чистая целлюлоза',
+    p4_bad_2:'Колония термитов съедает потолок за 6–12 мес.',
+    p4_bad_3:'Повреждения скрыты — обнаружение обычно поздно',
+    p4_good_label:'ПВХ-полотно несъедобно',
+    p4_good_1:'Синтетический материал — термиты не трогают',
+    p4_good_2:'Не содержит органики, которую едят насекомые',
+    p4_good_3:'Особенно критично в тропическом климате Таиланда',
+    p4_fact:'<b>Факт для Таиланда:</b> термиты наносят ущерб имуществу ежегодно на миллиарды бат. Натяжной потолок полностью исключает этот риск.',
+
+    p5_badge:'🍄 Проблема №5: Плесень',
+    p5_bad_label:'Гипсокартон и плесень',
+    p5_bad_1:'Гипс и бумага — идеальная среда для грибка',
+    p5_bad_2:'Высокая влажность Таиланда ускоряет рост плесени',
+    p5_bad_3:'Споры в воздухе — риск для дыхательной системы',
+    p5_good_label:'Натяжной — антиплесень',
+    p5_good_1:'ПВХ не впитывает влагу — грибку не на чем расти',
+    p5_good_2:'Гладкая поверхность легко протирается',
+    p5_good_3:'Вентиляционный зазор снижает влажность',
+    p5_fact:'<b>Здоровье:</b> плесень на потолке выделяет микотоксины. В тропическом климате при ГКЛ без вентиляции плесень появляется за 3–6 месяцев.',
+    p5_spores:'споры в воздухе',
+
+    p6_badge:'💸 Проблема №6: Расходы на обслуживание',
+    p6_bad_label:'Гипсокартон — постоянные расходы',
+    p6_bad_1:'Покраска каждые 5–7 лет: материал + работа',
+    p6_bad_2:'Ремонт трещин и стыков регулярно',
+    p6_bad_3:'При смене цвета — полный цикл подготовки',
+    p6_good_label:'Натяжной — ноль обслуживания',
+    p6_good_1:'25+ лет без покраски, шпаклёвки и ремонта',
+    p6_good_2:'Протереть влажной тряпкой — полный уход',
+    p6_good_3:'Смена дизайна — замена полотна без грязи',
+    p6_fact:'<b>Экономия за 25 лет:</b> владелец ГКЛ потратит 3–4 ремонта × стоимость работ. Натяжной потолок — 0 дополнительных вложений.',
+    s7_nat_title: '✨ Натяжной',
+    s7_nat_1: 'Удерживает воду, потом возвращает форму',
+    s7_nat_2: 'Монтаж за 3–5 часов, без пыли',
+    s7_nat_3: 'Эластичное полотно — трещин не бывает',
+    s7_nat_4: 'Бесшовная поверхность на весь срок',
+    s7_nat_5: 'Никакого обслуживания 25+ лет',
+    // slide 8 — cost chart
+    s8_h2: 'Стоимость владения за 25 лет',
+    s8_sub: 'Гипсокартон дешевле на старте — но не в итоге',
+    s8_years: 'лет',
+    s8_nat_end: '150k₽',
+    s8_gkl_end: '480k₽',
+    s8_repair1: '+ремонт',
+    s8_repair2: '+затопление',
+    s8_leg_nat: 'Натяжной потолок',
+    s8_leg_gkl: 'Гипсокартон (с ремонтами)',
+    s8_pill1: 'Экономия ~330 000 ₽ за 25 лет',
+    s8_pill2: 'ГКЛ требует 3–4 ремонта',
+    // slide 9 — CTA
+    s9_eyebrow: 'EuroConCraft — итог',
+    s9_h2: 'Красивый потолок<br>с первого дня — <em>навсегда</em>',
+    s9_sub: 'Натяжной потолок — единственное решение, объединяющее идеальный вид, защиту от воды, долговечность и быстрый монтаж.',
+    s9_b1:'Гарантия 25 лет', s9_b2:'Монтаж за 1 день', s9_b3:'Без пыли и грязи', s9_b4:'Любой дизайн',
+  },
+
+  th: {
+    ctrl_auto: '⏸ อัตโนมัติ',
+    ctrl_auto_paused: '▶ อัตโนมัติ',
+    // slide 0
+    s0_eyebrow: 'นวัตกรรมการตกแต่งเพดาน',
+    s0_h1: 'เพดาน<br><em>ยืดหยุ่น</em>',
+    s0_sub: 'เหตุใดนักออกแบบและผู้เชี่ยวชาญจึงเลือกเพดานยืดหยุ่น — และทำไมคุณควรเลือกเช่นกัน',
+    // slide 1
+    s1_eyebrow: 'อายุการใช้งาน',
+    s1_lbl: 'ปี รับประกันอายุการใช้งาน',
+    s1_h2: 'ติดตั้งครั้งเดียว — คงทนตลอดไป',
+    s1_p: 'เพดานยืดหยุ่นติดตั้งเพียงครั้งเดียว ไม่ต้องทาสี ไม่ต้องฉาบ ไม่ต้องเปลี่ยนเมื่อเปลี่ยนการตกแต่ง คุ้มค่าตั้งแต่การปรับปรุงครั้งแรก',
+    // slide 2
+    s2_h2: 'เพดานยืดหยุ่น vs. ทางเลือกอื่น',
+    s2_col0: 'คุณสมบัติ', s2_col1: 'เพดานยืดหยุ่น', s2_col2: 'ยิปซั่มบอร์ด', s2_col3: 'ทาสี', s2_col4: 'PVC',
+    s2_r1: 'ติดตั้งภายใน 1 วัน',
+    s2_r2: 'ทนความชื้น',
+    s2_r3: 'ป้องกันน้ำรั่วจากชั้นบน',
+    s2_r4: 'ไม่ต้องเตรียมพื้นผิว',
+    s2_r5: 'พื้นผิวเรียบสมบูรณ์แบบ',
+    s2_r6: 'พิมพ์ภาพ / ทุกสี',
+    s2_r7: 'อายุการใช้งาน 25+ ปี',
+    // slide 3
+    s3_h2: '6 เหตุผลที่ควรเลือกเพดานยืดหยุ่น',
+    s3_a1t:'ป้องกันน้ำท่วม',      s3_a1d:'รับน้ำได้ถึง 100 ลิตร/ตร.ม. ชั้นบนน้ำรั่ว — คุณปลอดภัย',
+    s3_a2t:'ติดตั้งภายในชั่วโมง', s3_a2d:'ห้องพร้อมใช้ภายใน 1 วัน ไม่มีฝุ่นและสิ่งสกปรก',
+    s3_a3t:'ออกแบบได้ทุกแบบ',     s3_a3d:'ด้าน, เงา, พิมพ์ภาพ, ท้องฟ้าดาว — ตามสไตล์คุณ',
+    s3_a4t:'กันเสียง',             s3_a4d:'ผ้าเพดานช่วยดูดซับเสียงรบกวนจากชั้นบน',
+    s3_a5t:'กันความร้อน',          s3_a5d:'ช่องอากาศช่วยลดการสูญเสียความร้อนและค่าไฟ',
+    s3_a6t:'ดูแลรักษาง่าย',        s3_a6d:'เช็ดด้วยผ้าชื้น — เสร็จแล้ว ไม่แตก ไม่เหลือง',
+    // slide 4
+    s4_h2: 'ประเภทเพดานยืดหยุ่น',
+    s4_t1n:'แบบเงา', s4_t1tag:'เอฟเฟกต์กระจก',
+    s4_t1d:'สะท้อนแสงและทำให้พื้นที่ดูกว้างขึ้น เหมาะกับห้องนั่งเล่น',
+    s4_t1f1:'ทำให้ห้องดูใหญ่', s4_t1f2:'สะท้อนแสง', s4_t1f3:'สวยงามในยามค่ำคืน',
+    s4_t2n:'แบบด้าน', s4_t2tag:'คลาสสิก',
+    s4_t2d:'ดูเหมือนเพดานทาสี ปิดบังความไม่เรียบของโครงสร้าง',
+    s4_t2f1:'เข้ากับทุกสไตล์', s4_t2f2:'ไม่มีแสงสะท้อน', s4_t2f3:'พิมพ์ภาพได้ทุกสี',
+    s4_t3n:'แบบซาติน', s4_t3tag:'พรีเมียม',
+    s4_t3d:'ประกายนวลเหมือนผ้าไหม ไม่เงาจนเกินไป ตัวเลือกของนักออกแบบ',
+    s4_t3f1:'ประกายสวยงาม', s4_t3f2:'ดูหรูหรา', s4_t3f3:'เข้ากันได้ทุกสไตล์',
+    // slide 5
+    s5_h2: 'อายุการใช้งาน: เพดานยืดหยุ่นชนะ',
+    s5_b1n:'เพดานยืดหยุ่น', s5_b1v:'25–30 ปี',
+    s5_b2n:'ยิปซั่มบอร์ด',  s5_b2v:'10–15 ปี',
+    s5_b3n:'ทาสี',           s5_b3v:'5–8 ปี',
+    s5_b4n:'แผ่น PVC',       s5_b4v:'5–10 ปี',
+    s5_b5n:'กระเบื้องฝ้า',   s5_b5v:'3–7 ปี',
+    s5_note:'* ภายใต้สภาวะการใช้งานปกติและการดูแลรักษาที่เหมาะสม',
+    // slide 6
+    s6_h2: 'ขั้นตอนการติดตั้ง',
+    s6_s1t:'วัดขนาด',    s6_s1d:'ช่างมาวัดขนาดอย่างแม่นยำ ผ้าผลิตตามขนาดห้องของคุณ',
+    s6_s2t:'ติดโปรไฟล์', s6_s2d:'ติดโปรไฟล์อะลูมิเนียมรอบขอบห้อง — ฐานสำหรับดึงผ้า',
+    s6_s3t:'ดึงผ้า',     s6_s3d:'อุ่นผ้า PVC แล้วดึงยึดเข้ากับโปรไฟล์อย่างเรียบร้อย',
+    s6_s4t:'เสร็จสิ้น',  s6_s4d:'ติดตั้งโคมไฟและของตกแต่ง พร้อมใช้งานทันที',
+    s6_fact:'ห้อง 20 ตร.ม. ติดตั้งใน <b>3–5 ชั่วโมง</b> ไม่มีฝุ่น เข้าอยู่ได้เลยในวันเดียวกัน',
+    // slide 7 — duel
+    s7_h2: 'เพดานยืดหยุ่น vs. ยิปซั่มบอร์ด',
+    s7_gkl_title: '😤 ยิปซั่มบอร์ด',
+    s7_gkl_1: 'น้ำรั่ว — ต้องเปลี่ยนแผ่นทั้งหมด',
+    s7_gkl_2: 'ติดตั้ง 5–10 วัน + ฝุ่น + รอแห้ง',
+    s7_gkl_3: 'รอยแตกจากการทรุดของอาคาร — หลีกเลี่ยงไม่ได้',
+    s7_gkl_4: 'ปลวกกัดกินชั้นกระดาษของยิปซั่ม',
+    s7_gkl_5: 'ทาสีใหม่ทุก 5–7 ปี — ค่าใช้จ่ายเพิ่ม',
+    s7_termite_title: '🐛 ปลวกชอบยิปซั่มบอร์ดมาก',
+    s7_termite_desc: 'ชั้นกระดาษของยิปซั่มคือเซลลูโลส อาหารโปรดของปลวก ในสภาพอากาศเขตร้อนของไทย ปลวกกัดกินเพดานจากด้านในโดยไม่ทันสังเกต ส่วนผ้า PVC ของเพดานยืดหยุ่นปลวกกินไม่ได้',
+    // PROBLEM SLIDES TH
+    p1_badge:'💧 ปัญหาที่ 1: น้ำรั่วจากชั้นบน',
+    p1_bad_label:'ยิปซั่มบอร์ดเมื่อน้ำท่วม',
+    p1_bad_1:'แผ่นยิปซั่มชุ่มน้ำและบวมทันที',
+    p1_bad_2:'ปูนฉาบและสีลอกเป็นแผ่น',
+    p1_bad_3:'ต้องเปลี่ยนเพดานใหม่ทั้งหมด 2 สัปดาห์ขึ้นไป',
+    p1_good_label:'เพดานยืดหยุ่นเมื่อน้ำท่วม',
+    p1_good_1:'รับน้ำได้ถึง 100 ลิตร/ตร.ม. โดยไม่ขาด',
+    p1_good_2:'ระบายน้ำผ่านวาล์วใน 20 นาที',
+    p1_good_3:'ผ้าคืนรูปทรงเดิมได้สมบูรณ์',
+    p1_fact:'<b>เหตุการณ์จริง:</b> เมื่อท่อแตกที่ชั้นบน เพดานยืดหยุ่นรับน้ำหนัก 3 ตันได้ — ครอบครัวรู้เรื่องน้ำรั่วจากเพดานที่โป่งนูนเท่านั้น',
+
+    p2_badge:'⚒️ ปัญหาที่ 2: ติดตั้งนาน',
+    p2_bad_label:'ยิปซั่มบอร์ด — กระบวนการ',
+    p2_bad_1:'5–10 วันของฝุ่น สิ่งสกปรก และเสียงดัง',
+    p2_bad_2:'รอปูนแห้ง + รองพื้น + ทาสี',
+    p2_bad_3:'ไม่สามารถอยู่อาศัยระหว่างทำงาน',
+    p2_good_label:'เพดานยืดหยุ่น — เร็วและสะอาด',
+    p2_good_1:'3–5 ชั่วโมงต่อห้อง 20 ตร.ม.',
+    p2_good_2:'ไม่มีฝุ่น ไม่มีงานเปียก',
+    p2_good_3:'เข้าอยู่ได้เลยในคืนเดียวกัน',
+    p2_fact:'<b>เปรียบเทียบ:</b> ติดตั้ง GKL ในคอนโด 2 ห้องนอน = 7–14 วัน เพดานยืดหยุ่นทั้งห้อง = 1 วันทำงาน',
+    p2_days_label:'วัน',
+
+    p3_badge:'🕰️ ปัญหาที่ 3: รอยแตก',
+    p3_bad_label:'ยิปซั่มบอร์ดแตกร้าว',
+    p3_bad_1:'การทรุดตัวของอาคารใหม่ฉีกรอยต่อหลีกเลี่ยงไม่ได้',
+    p3_bad_2:'แผ่นดินไหวและการสั่นสะเทือน = รอยแตก',
+    p3_bad_3:'ซ่อมรอยต่อ: ปูน สี กลิ่นเคมี',
+    p3_good_label:'เพดานยืดหยุ่น — ไม่มีรอยแตก',
+    p3_good_1:'ผ้ายืดหยุ่นรองรับการเคลื่อนตัวทุกชนิด',
+    p3_good_2:'ยืดและคืนรูปโดยไม่ทิ้งร่องรอย',
+    p3_good_3:'25 ปีโดยไม่มีรอยแตกแม้แต่เส้นเดียว',
+    p3_fact:'<b>วัสดุ:</b> แผ่น PVC ยืดได้ 6–8% โดยไม่เสียรูป ส่วนยิปซั่มบอร์ดแตกเมื่อเคลื่อนตัวแม้เพียงเล็กน้อย',
+
+    p4_badge:'🐛 ปัญหาที่ 4: ปลวก',
+    p4_bad_label:'ยิปซั่มบอร์ด — อาหารปลวก',
+    p4_bad_1:'ชั้นกระดาษ = เซลลูโลสบริสุทธิ์',
+    p4_bad_2:'อาณานิคมปลวกกินเพดานได้ใน 6–12 เดือน',
+    p4_bad_3:'ความเสียหายซ่อนอยู่ข้างใน — มักพบเมื่อสายเกินไป',
+    p4_good_label:'PVC กินไม่ได้',
+    p4_good_1:'วัสดุสังเคราะห์ — ปลวกไม่สนใจ',
+    p4_good_2:'ไม่มีสารอินทรีย์ที่แมลงกิน',
+    p4_good_3:'สำคัญมากในภูมิอากาศเขตร้อนของไทย',
+    p4_fact:'<b>ข้อเท็จจริงในไทย:</b> ปลวกสร้างความเสียหายต่อทรัพย์สินปีละหลายพันล้านบาท เพดานยืดหยุ่นขจัดความเสี่ยงนี้ได้อย่างสมบูรณ์',
+
+    p5_badge:'🍄 ปัญหาที่ 5: เชื้อรา',
+    p5_bad_label:'ยิปซั่มบอร์ดและเชื้อรา',
+    p5_bad_1:'ยิปซั่มและกระดาษ — สภาพแวดล้อมสมบูรณ์สำหรับเชื้อรา',
+    p5_bad_2:'ความชื้นสูงในไทยเร่งการเติบโตของเชื้อรา',
+    p5_bad_3:'สปอร์ในอากาศ — อันตรายต่อระบบทางเดินหายใจ',
+    p5_good_label:'เพดานยืดหยุ่น — ต้านเชื้อรา',
+    p5_good_1:'PVC ไม่ดูดซับความชื้น — เชื้อราไม่มีที่เกาะ',
+    p5_good_2:'พื้นผิวเรียบเช็ดทำความสะอาดง่าย',
+    p5_good_3:'ช่องอากาศช่วยลดความชื้นสะสม',
+    p5_fact:'<b>สุขภาพ:</b> เชื้อราปล่อยสารพิษไมโคทอกซิน ในภูมิอากาศเขตร้อนยิปซั่มที่ไม่มีการระบายอากาศจะมีเชื้อราภายใน 3–6 เดือน',
+    p5_spores:'สปอร์ในอากาศ',
+
+    p6_badge:'💸 ปัญหาที่ 6: ค่าบำรุงรักษา',
+    p6_bad_label:'ยิปซั่มบอร์ด — ค่าใช้จ่ายต่อเนื่อง',
+    p6_bad_1:'ทาสีทุก 5–7 ปี: วัสดุ + ค่าแรง',
+    p6_bad_2:'ซ่อมรอยแตกและรอยต่อสม่ำเสมอ',
+    p6_bad_3:'เปลี่ยนสี — ต้องเตรียมผิวทั้งหมดใหม่',
+    p6_good_label:'เพดานยืดหยุ่น — ไม่ต้องบำรุงรักษา',
+    p6_good_1:'25+ ปีไม่ต้องทาสี ฉาบปูน หรือซ่อม',
+    p6_good_2:'เช็ดด้วยผ้าชื้น — ดูแลครบ',
+    p6_good_3:'เปลี่ยนดีไซน์ — เปลี่ยนผ้าใหม่ไม่เลอะเทอะ',
+    p6_fact:'<b>ประหยัดใน 25 ปี:</b> เจ้าของ GKL จะซ่อม 3–4 ครั้ง × ค่าแรง เพดานยืดหยุ่น = 0 บาทเพิ่มเติม',
+    s7_nat_title: '✨ เพดานยืดหยุ่น',
+    s7_nat_1: 'รับน้ำไว้ได้ แล้วคืนรูปทรงเดิม',
+    s7_nat_2: 'ติดตั้ง 3–5 ชั่วโมง ไม่มีฝุ่น',
+    s7_nat_3: 'ผ้ายืดหยุ่น — ไม่มีรอยแตกเลย',
+    s7_nat_4: 'ผิวไร้รอยต่อตลอดอายุการใช้งาน',
+    s7_nat_5: 'ไม่ต้องบำรุงรักษา 25+ ปี',
+    // slide 8 — cost chart
+    s8_h2: 'ค่าใช้จ่ายตลอด 25 ปี',
+    s8_sub: 'ยิปซั่มบอร์ดถูกกว่าตอนแรก — แต่แพงกว่าในระยะยาว',
+    s8_years: 'ปี',
+    s8_nat_end: '150k฿',
+    s8_gkl_end: '480k฿',
+    s8_repair1: '+ซ่อม',
+    s8_repair2: '+น้ำรั่ว',
+    s8_leg_nat: 'เพดานยืดหยุ่น',
+    s8_leg_gkl: 'ยิปซั่มบอร์ด (รวมซ่อม)',
+    s8_pill1: 'ประหยัดได้ ~330,000 ฿ ใน 25 ปี',
+    s8_pill2: 'ยิปซั่มต้องซ่อม 3–4 ครั้ง',
+    // slide 9 — CTA
+    s9_eyebrow: 'EuroConCraft — สรุป',
+    s9_h2: 'เพดานสวยงาม<br>ตั้งแต่วันแรก — <em>ตลอดไป</em>',
+    s9_sub: 'เพดานยืดหยุ่นคือทางออกเดียวที่รวมความสวยงาม การป้องกันน้ำ ความทนทาน และการติดตั้งรวดเร็วไว้ในผลิตภัณฑ์เดียว',
+    s9_b1:'รับประกัน 25 ปี', s9_b2:'ติดตั้ง 1 วัน', s9_b3:'ไม่มีฝุ่น', s9_b4:'ทุกดีไซน์',
+  }
+};
+
+/* ════════════════════════════
+   APPLY LANGUAGE
+════════════════════════════ */
+let lang = 'ru';
+
+function applyLang(l) {
+  lang = l;
+  const d = T[l];
+  document.body.classList.toggle('th', l === 'th');
+  document.querySelectorAll('[data-key]').forEach(el => {
+    const k = el.dataset.key;
+    if (d[k] !== undefined) el.innerHTML = d[k];
+  });
+  // update auto button
+  autoBtn.textContent = autoPlay ? d.ctrl_auto : d.ctrl_auto_paused;
+  // update lang buttons
+  document.querySelectorAll('.lang-btn').forEach(b => {
+    b.classList.toggle('active', b.dataset.lang === l);
+  });
+}
+
+/* ════════════════════════════
+   SLIDESHOW
+════════════════════════════ */
+const slides = Array.from(document.querySelectorAll('.slide'));
+const dotsEl = document.getElementById('dots');
+const progressEl = document.getElementById('progress');
+const counterEl = document.getElementById('counter');
+const autoBtn = document.getElementById('autoBtn');
+const DURATION = 6500;
+let cur = 0, autoPlay = true, pTimer = null;
+
+slides.forEach((_, i) => {
+  const d = document.createElement('div');
+  d.className = 'dot' + (i===0?' active':'');
+  d.addEventListener('click', () => goTo(i));
+  dotsEl.appendChild(d);
+});
+
+function updateDots(i) {
+  document.querySelectorAll('.dot').forEach((d,j)=>d.classList.toggle('active',j===i));
+}
+function goTo(idx) {
+  slides[cur].classList.remove('active');
+  cur = ((idx % slides.length) + slides.length) % slides.length;
+  slides[cur].classList.add('active');
+  updateDots(cur);
+  counterEl.textContent = (cur+1) + ' / ' + slides.length;
+  startProgress();
+}
+function startProgress() {
+  progressEl.style.transition = 'none';
+  progressEl.style.width = '0%';
+  clearTimeout(pTimer);
+  if (!autoPlay) return;
+  requestAnimationFrame(()=>requestAnimationFrame(()=>{
+    progressEl.style.transition = `width ${DURATION}ms linear`;
+    progressEl.style.width = '100%';
+  }));
+  pTimer = setTimeout(()=>goTo(cur+1), DURATION);
+}
+function toggleAuto() {
+  autoPlay = !autoPlay;
+  autoBtn.textContent = autoPlay ? T[lang].ctrl_auto : T[lang].ctrl_auto_paused;
+  autoBtn.classList.toggle('paused', !autoPlay);
+  if (autoPlay) startProgress();
+  else { clearTimeout(pTimer); progressEl.style.transition='none'; progressEl.style.width='0%'; }
+}
+
+document.getElementById('prevBtn').addEventListener('click',()=>{clearTimeout(pTimer);goTo(cur-1);});
+document.getElementById('nextBtn').addEventListener('click',()=>{clearTimeout(pTimer);goTo(cur+1);});
+autoBtn.addEventListener('click', toggleAuto);
+
+document.addEventListener('keydown', e=>{
+  if(e.key==='ArrowRight'||e.key===' '){clearTimeout(pTimer);goTo(cur+1);}
+  if(e.key==='ArrowLeft'){clearTimeout(pTimer);goTo(cur-1);}
+  if(e.key==='p'||e.key==='P') toggleAuto();
+});
+let tx=0,ty=0;
+document.addEventListener('touchstart',e=>{tx=e.touches[0].clientX;ty=e.touches[0].clientY;},{passive:true});
+document.addEventListener('touchend',e=>{
+  const dx=e.changedTouches[0].clientX-tx;
+  const dy=e.changedTouches[0].clientY-ty;
+  if(Math.abs(dx)>Math.abs(dy)&&Math.abs(dx)>45){clearTimeout(pTimer);goTo(cur+(dx<0?1:-1));}
+},{passive:true});
+
+// lang buttons
+document.querySelectorAll('.lang-btn').forEach(b => {
+  b.addEventListener('click', () => applyLang(b.dataset.lang));
+});
+
+// init
+applyLang('th');
+startProgress();
+</script>
+</body>
+</html>
